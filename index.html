@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Sidebar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <ul class="sidebar-menu">
+            <li><i class="fas fa-home"></i> Dashboard</li>
+
+            <li class="dropdown">
+                <a href="#" onclick="toggleDropdown('usersMenu')">
+                    <i class="fas fa-user"></i> Users <span class="arrow">▼</span>
+                </a>
+                <ul class="submenu" id="usersMenu">
+                    <li>Permissions</li>
+                    <li>Import</li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" onclick="toggleDropdown('leavesMenu')">
+                    <i class="fas fa-star"></i> My Leaves <span class="arrow">▼</span>
+                </a>
+                <ul class="submenu" id="leavesMenu">
+                    <li>Follow Up</li>
+                    <li>Practices</li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" onclick="toggleDropdown('hrMenu')">
+                    <i class="fas fa-briefcase"></i> HR <span class="arrow">▼</span>
+                </a>
+                <ul class="submenu" id="hrMenu">
+                    <li>VOB</li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" onclick="toggleDropdown('reportsMenu')">
+                    <i class="fas fa-chart-bar"></i> Reports <span class="arrow">▼</span>
+                </a>
+                <ul class="submenu" id="reportsMenu">
+                    <li>Leads</li>
+                </ul>
+            </li>
+
+            <li><i class="fas fa-ellipsis-h"></i> Show All</li>
+        </ul>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
