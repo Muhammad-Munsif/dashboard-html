@@ -1,0 +1,22 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  .table-container {
+    overflow-x: auto;
+  }
+  .profile-bar {
+    height: 8px;
+    border-radius: 4px;
+  }
+  .low {
+    background-color: red;
+  }
+  .medium {
+    background-color: orange;
+  }
+  .high {
+    background-color: green;
+  }

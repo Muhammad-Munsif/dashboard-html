@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -40,7 +40,7 @@
     </style>
 </head>
 <body>
-    <button id="openSidebar" class="btn btn-primary">Open Filter</button>
+    <button id="openSidebar" class="btn btn-primary font-monospace">Open Filter</button>
     
     <div class="sidebar" id="sidebar">
         <div class="header">
@@ -73,27 +73,11 @@
         </div>
     </div>
     
-    <script>
-        document.getElementById('openSidebar').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.add('active');
-        });
-        
-        document.getElementById('backButton').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.remove('active');
-        });
-        
-        document.getElementById('closeSidebar').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.remove('active');
-        });
-        
-        document.getElementById('closeSidebar2').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.remove('active');
-        });
-    </script>
+ 
 </body>
-</html>-->
+</html>
 
-<!-- <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -186,7 +170,7 @@
         });
     </script>
 </body>
-</html> -->
+</html>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -194,59 +178,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Custom Filter</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-      }
-      .sidebar {
-        position: fixed;
-        top: 0;
-        right: -400px;
-        width: 400px;
-        height: 100%;
-        background: white;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-        padding: 20px;
-        transition: right 0.3s ease-in-out;
-        overflow-y: auto;
-      }
-      .sidebar.active {
-        right: 0;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .back-arrow {
-        cursor: pointer;
-        font-size: 1.5rem;
-      }
-      .form-control {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      .btn {
-        padding: 10px 15px;
-        border: none;
-        cursor: pointer;
-        border-radius: 4px;
-        font-size: 16px;
-      }
-      .btn-primary {
-        background-color: #007bff;
-        color: white;
-      }
-      .btn-secondary {
-        background-color: #ccc;
-      }
-    </style>
+   
   </head>
   <body>
     <button id="openSidebar" class="btn btn-primary">Open Filter</button>
