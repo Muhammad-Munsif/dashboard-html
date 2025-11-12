@@ -34,18 +34,18 @@ document.getElementById("closeSidebar2").addEventListener("click", function () {
   document.getElementById("sidebar").classList.remove("active");
 });
 
-document.getElementById('openSidebar').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.add('active');
+document.getElementById("openSidebar").addEventListener("click", function () {
+  document.getElementById("sidebar").classList.add("active");
 });
 
-document.getElementById('backButton').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.remove('active');
+document.getElementById("backButton").addEventListener("click", function () {
+  document.getElementById("sidebar").classList.remove("active");
 });
 
-document.getElementById('closeSidebar').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.remove('active');
+document.getElementById("closeSidebar").addEventListener("click", function () {
+  document.getElementById("sidebar").classList.remove("active");
 });
 
-document.getElementById('closeSidebar2').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.remove('active');
+document.getElementById("closeSidebar2").addEventListener("click", function () {
+  document.getElementById("sidebar").classList.remove("active");
 });
