@@ -1,5 +1,5 @@
 // pages/Analytics.jsx
-import React from 'react';
+import React from "react";
 
 const Analytics = () => {
   return (
