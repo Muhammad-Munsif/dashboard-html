@@ -1,15 +1,16 @@
 // pages/dashboard/Products.jsx
-import React, { useState } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
-import { productsData } from '../../data/productsData';
+import React, { useState } from "react";
+import { FaEdit, FaTrash, FaPlus, FaSearch } from "react-icons/fa";
+import { productsData } from "../../data/productsData";
 
 const Products = () => {
   const [products] = useState(productsData);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -83,8 +84,12 @@ const Products = () => {
                         alt={product.name}
                       />
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-500 line-clamp-1">{product.description}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {product.name}
+                        </div>
+                        <div className="text-sm text-gray-500 line-clamp-1">
+                          {product.description}
+                        </div>
                       </div>
                     </div>
                   </td>
