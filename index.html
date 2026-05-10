@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NexusHR · Modern Employee Dashboard</title>
+  <!-- Google Fonts + Bootstrap Icons + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      overflow-x: hidden;
+      color: #0f172a;
+    }
+
+    /* ---------- SIDEBAR (modern glass) ---------- */
+    .sidebar {
+      width: 280px;
+      height: 100vh;
+      background: linear-gradient(145deg, #0f172a 0%, #111827 100%);
+      backdrop-filter: blur(2px);
+      position: fixed;
+      left: 0;
+      top: 0;
+      padding-top: 88px;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      z-index: 1050;
+      color: #e2e8f0;
+      box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar.collapsed {
+      width: 88px;
+    }
+
+    .sidebar.collapsed .sidebar-text,
+    .sidebar.collapsed .arrow {
+      display: none;
+    }
+
+    .sidebar.collapsed .sidebar-menu li {
+      justify-content: center;
+    }
+
+    .sidebar.collapsed .sidebar-menu li > div:first-child {
+      justify-content: center;
+    }
+
+    .sidebar.collapsed .submenu {
+      display: none !important;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0 16px;
+    }
+
+    .sidebar-menu li {
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 16px;
+      margin-bottom: 6px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .sidebar-menu li > div:first-child {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .sidebar-menu li i {
+      width: 24px;
+      font-size: 1.2rem;
+      color: #94a3b8;
+    }
+
+    .sidebar-menu li:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+    }
+    .sidebar-menu li:hover i {
+      color: #a5f3fc;
+    }
+
+    .submenu {
+      list-style: none;
+      padding-left: 42px;
+      display: none;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 20px;
+      margin-top: 8px;
+      backdrop-filter: blur(4px);
+    }
+
+    .submenu li {
+      padding: 10px 8px;
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #cbd5e1;
+      gap: 8px;
+    }
+
+    .arrow {
+      font-size: 11px;
+      transition: transform 0.2s;
+      opacity: 0.7;
+    }
+
+    /* toggle button */
+    .toggle-btn {
+      position: fixed;
+      top: 20px;
+      left: 22px;
+      z-index: 1060;
+      background: #ffffff;
+      color: #0f172a;
+      border: none;
+      font-size: 1.2rem;
+      padding: 8px 14px;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+      transition: 0.2s;
+      backdrop-filter: blur(4px);
+      background: rgba(255,255,255,0.9);
+    }
+    .toggle-btn:hover {
+      background: white;
+      transform: scale(0.96);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+    }
+
+    /* main container */
+    .main-container {
+      margin-left: 280px;
+      padding: 28px 32px;
+      transition: margin-left 0.3s ease;
+      min-height: 100vh;
+    }
+
+    /* Filter sidebar (right) */
+    .filter-sidebar {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      width: 420px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.12);
+      padding: 30px 28px;
+      transition: right 0.35s ease-out;
+      overflow-y: auto;
+      z-index: 1100;
+      border-left: 1px solid rgba(203, 213, 225, 0.5);
+    }
+    .filter-sidebar.active {
+      right: 0;
+    }
+
+    /* dashboard cards (modern) */
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 42px;
+    }
+    .dashboard-card {
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 1.5rem;
+      transition: all 0.25s;
+      border: 1px solid rgba(226, 232, 240, 0.6);
+      box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.05);
+    }
+    .dashboard-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e1;
+    }
+    .dashboard-card h3 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #1e293b, #2d3a4e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .dashboard-card p {
+      color: #475569;
+      font-weight: 500;
+      letter-spacing: -0.2px;
+    }
+
+    /* Table styling */
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+      border: 1px solid #eef2f6;
+    }
+    .table {
+      margin-bottom: 0;
+      font-size: 0.85rem;
+    }
+    .table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #1e293b;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 14px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .table td {
+      padding: 14px 14px;
+      vertical-align: middle;
+      border-color: #f0f2f5;
+    }
+    .profile-bar {
+      background: #eef2ff;
+      border-radius: 20px;
+      height: 6px;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+    .bar-fill {
+      height: 6px;
+      border-radius: 20px;
+      background: #10b981;
+    }
+    .low .bar-fill { background: #ef4444; }
+    .medium .bar-fill { background: #f59e0b; }
+    .high .bar-fill { background: #10b981; }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 100px;
+      object-fit: cover;
+      margin-right: 12px;
+      border: 1.5px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .filter-btn {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-weight: 500;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+      font-size: 0.85rem;
+    }
+    .filter-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      transform: scale(0.97);
+    }
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: -0.3px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* responsive */
+    @media (max-width: 992px) {
+      .main-container {
+        padding: 20px 20px;
+      }
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+      }
+      .sidebar.active {
+        width: 280px;
+        overflow-y: auto;
+      }
+      .main-container {
+        margin-left: 0 !important;
+        padding: 20px 16px;
+      }
+      .filter-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+      .dashboard-card h3 {
+        font-size: 1.8rem;
+      }
+    }
+    /* badges & micro */
+    .badge-soft {
+      background: #eef2ff;
+      color: #1e40af;
+    }
+    .btn-outline-mint {
+      border-radius: 30px;
+    }
+    .glass-input {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+    }
+    .form-control:focus {
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      border-color: #818cf8;
+    }
+  </style>
+</head>
+<body>
+
+<button class="toggle-btn" id="toggleSidebarBtn"><i class="fas fa-bars"></i></button>
+
+<div class="sidebar" id="sidebar">
+  <ul class="sidebar-menu">
+    <li onclick="app.showSection('dashboard')"><div><i class="fas fa-chart-pie"></i><span class="sidebar-text">Dashboard</span></div></li>
+    <li class="dropdown-item-li">
+      <div onclick="app.toggleDropdown('usersMenu')" class="d-flex justify-content-between w-100">
+        <div><i class="fas fa-users"></i><span class="sidebar-text">User Hub</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <ul class="submenu" id="usersMenu">
+        <li onclick="app.showSection('users')">👥 All Employees</li>
+        <li onclick="app.alertFeature('Permissions manager')">🔒 Permissions</li>
+        <li onclick="app.alertFeature('Bulk import')">📁 Import Data</li>
+      </ul>
+    </li>
+    <li class="dropdown-item-li">
+      <div onclick="app.toggleDropdown('leavesMenu')" class="d-flex justify-content-between w-100">
+        <div><i class="fas fa-calendar-week"></i><span class="sidebar-text">Time Off</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <ul class="submenu" id="leavesMenu">
+        <li onclick="app.alertFeature('Leave requests')">📋 Follow Up</li>
+        <li onclick="app.alertFeature('Leave practices')">📖 Practices</li>
+      </ul>
+    </li>
+    <li class="dropdown-item-li">
+      <div onclick="app.toggleDropdown('hrMenu')" class="d-flex justify-content-between w-100">
+        <div><i class="fas fa-briefcase"></i><span class="sidebar-text">HR Core</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <ul class="submenu" id="hrMenu">
+        <li onclick="app.alertFeature('VOB records')">📄 VOB</li>
+      </ul>
+    </li>
+    <li class="dropdown-item-li">
+      <div onclick="app.toggleDropdown('reportsMenu')" class="d-flex justify-content-between w-100">
+        <div><i class="fas fa-chart-line"></i><span class="sidebar-text">Insights</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <ul class="submenu" id="reportsMenu">
+        <li onclick="app.alertFeature('Leads analytics')">📊 Leads Report</li>
+      </ul>
+    </li>
+    <li onclick="app.alertFeature('Expand settings')"><div><i class="fas fa-ellipsis-h"></i><span class="sidebar-text">More modules</span></div></li>
+  </ul>
+</div>
+
+<div class="main-container" id="mainContainer">
+  <!-- DASHBOARD SECTION -->
+  <div id="dashboardSection">
+    <div class="content-header">
+      <div>
+        <h2 class="fw-bold" style="color:#0f172a;"><i class="fas fa-building me-2 text-primary"></i>Workplace Pulse</h2>
+        <p class="text-muted mt-1">Real-time employee overview & analytics</p>
+      </div>
+      <button class="filter-btn" onclick="app.openFilterSidebar()"><i class="fas fa-sliders-h me-2"></i>Advanced Filter</button>
+    </div>
+    <div class="dashboard-cards" id="statsCards"></div>
+    <div class="users-section">
+      <div class="section-title"><i class="fas fa-user-group text-primary"></i> Active Contributors</div>
+      <div class="table-container">
+        <table class="table align-middle">
+          <thead>
+            <tr><th>EMP ID</th><th>Full Name</th><th>Role</th><th>Department</th><th>Team</th><th>Supervisor</th><th>Tenure</th><th>Profile %</th></tr>
+          </thead>
+          <tbody id="dashboardTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS SECTION (dedicated management) -->
+  <div id="usersSection" style="display: none;">
+    <div class="content-header">
+      <div>
+        <h2 class="fw-bold"><i class="fas fa-address-card me-2 text-primary"></i>Employee Directory</h2>
+        <p class="text-secondary mt-1">Manage roles, teams, and profiles</p>
+      </div>
+      <button class="filter-btn" onclick="app.openFilterSidebar()"><i class="fas fa-filter"></i> Refine list</button>
+    </div>
+    <div class="table-container">
+      <table class="table align-middle">
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Team</th><th>Supervisor</th><th>Tenure</th><th>Profile</th><th></th></tr>
+        </thead>
+        <tbody id="usersTableBody"></tbody>
+      </table>
+    </div>
+    <div class="mt-3 d-flex justify-content-end"><span class="badge bg-light text-dark p-2"><i class="far fa-edit"></i> Click edit to manage</span></div>
+  </div>
+</div>
+
+<!-- FILTER SIDEBAR (elegant) -->
+<div class="filter-sidebar" id="filterSidebar">
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <h5 class="fw-bold m-0"><i class="fas fa-sliders-h me-2 text-primary"></i>Smart Filter</h5>
+    <button class="btn-close" onclick="app.closeFilterSidebar()"></button>
+  </div>
+  <div class="mb-3"><input type="text" id="filterJobTitle" class="form-control" placeholder="Job title · e.g. Manager"></div>
+  <div class="mb-3"><input type="text" id="filterTeam" class="form-control" placeholder="Team name · Super A, Alpha"></div>
+  <div class="mb-3"><input type="text" id="filterDepartment" class="form-control" placeholder="Department · Operations, HR"></div>
+  <div class="mb-3"><input type="text" id="filterShift" class="form-control" placeholder="Shift pattern · Morning, Night"></div>
+  <div class="mb-3"><input type="text" id="filterCity" class="form-control" placeholder="City · New York, Austin"></div>
+  <div class="mb-3"><input type="text" id="filterState" class="form-control" placeholder="State / Province"></div>
+  <div class="mb-4"><input type="text" id="filterReligion" class="form-control" placeholder="Religion / Belief (optional)"></div>
+  <div class="d-grid gap-2">
+    <button class="btn btn-primary rounded-pill" id="applyFilterBtn"><i class="fas fa-check-circle me-1"></i> Apply filters</button>
+    <button class="btn btn-outline-secondary rounded-pill" id="resetFilterBtn"><i class="fas fa-undo-alt me-1"></i> Reset all</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    // ----- enriched employees dataset with extra fields for filtering
+    const employeesData = [
+      { id:"0001", name:"Anika Vaccaro", designation:"Manager", department:"Operations", team:"Super A", supervisor:"Kaylo Margo", tenure:"1 Yr, 2 Mo", profile:95, shift:"Morning", city:"New York", state:"NY", religion:"Christian", avatar:"https://randomuser.me/api/portraits/women/68.jpg" },
+      { id:"0002", name:"Chance Stanton", designation:"Department Head", department:"HR", team:"Super B", supervisor:"Ayson Westervelt", tenure:"3 Yr, 6 Mo", profile:45, shift:"Evening", city:"Austin", state:"TX", religion:"Buddhism", avatar:"https://randomuser.me/api/portraits/men/32.jpg" },
+      { id:"0003", name:"Gretchen Lubin", designation:"Team Lead", department:"Operations", team:"Super C", supervisor:"Ryan Vaccaro", tenure:"2 Yr", profile:90, shift:"Morning", city:"Seattle", state:"WA", religion:"Christian", avatar:"https://randomuser.me/api/portraits/women/44.jpg" },
+      { id:"0004", name:"Roger Westervelt", designation:"VOB Specialist", department:"Operations", team:"Super D", supervisor:"Anika Gold", tenure:"1 Yr, 2 Mo", profile:93, shift:"Night", city:"Chicago", state:"IL", religion:"Jewish", avatar:"https://randomuser.me/api/portraits/men/45.jpg" },
+      { id:"0005", name:"Tatiana Dias", designation:"Account Manager", department:"Operations", team:"Super E", supervisor:"Angel Levin", tenure:"1 Yr, 1 Mo", profile:15, shift:"Morning", city:"Miami", state:"FL", religion:"Catholic", avatar:"https://randomuser.me/api/portraits/women/29.jpg" },
+      { id:"0006", name:"Marcus Chen", designation:"Senior Analyst", department:"Finance", team:"Alpha", supervisor:"Linda Wu", tenure:"2 Yr, 4 Mo", profile:88, shift:"Morning", city:"San Francisco", state:"CA", religion:"Atheist", avatar:"https://randomuser.me/api/portraits/men/22.jpg" },
+      { id:"0007", name:"Sophia Rodriguez", designation:"HR Generalist", department:"HR", team:"Talent Squad", supervisor:"Chance Stanton", tenure:"1 Yr", profile:72, shift:"Evening", city:"Los Angeles", state:"CA", religion:"Christian", avatar:"https://randomuser.me/api/portraits/women/90.jpg" },
+      { id:"0008", name:"James Okafor", designation:"IT Support", department:"Technology", team:"TechOps", supervisor:"Rita Blake", tenure:"6 Mo", profile:60, shift:"Night", city:"Houston", state:"TX", religion:"Muslim", avatar:"https://randomuser.me/api/portraits/men/55.jpg" },
+      { id:"0009", name:"Elena Park", designation:"Product Owner", department:"Product", team:"Innovate", supervisor:"Marcus Chen", tenure:"8 Mo", profile:82, shift:"Morning", city:"Seattle", state:"WA", religion:"None", avatar:"https://randomuser.me/api/portraits/women/12.jpg" }
+    ];
+
+    let currentFilters = { jobTitle:"", team:"", department:"", shift:"", city:"", state:"", religion:"" };
+    let activeSection = "dashboard";
+
+    function getFilteredEmployees() {
+      return employeesData.filter(emp => {
+        if (currentFilters.jobTitle && !emp.designation.toLowerCase().includes(currentFilters.jobTitle.toLowerCase())) return false;
+        if (currentFilters.team && !emp.team.toLowerCase().includes(currentFilters.team.toLowerCase())) return false;
+        if (currentFilters.department && !emp.department.toLowerCase().includes(currentFilters.department.toLowerCase())) return false;
+        if (currentFilters.shift && !emp.shift.toLowerCase().includes(currentFilters.shift.toLowerCase())) return false;
+        if (currentFilters.city && !emp.city.toLowerCase().includes(currentFilters.city.toLowerCase())) return false;
+        if (currentFilters.state && !emp.state.toLowerCase().includes(currentFilters.state.toLowerCase())) return false;
+        if (currentFilters.religion && !emp.religion.toLowerCase().includes(currentFilters.religion.toLowerCase())) return false;
+        return true;
+      });
+    }
+
+    function getProfileClass(percent) {
+      if (percent < 40) return "low";
+      if (percent < 70) return "medium";
+      return "high";
+    }
+
+    function renderProfileWidget(percent) {
+      const cls = getProfileClass(percent);
+      return `<div class="profile-bar ${cls}"><div class="bar-fill" style="width: ${percent}%;"></div></div><div class="d-flex justify-content-between align-items-center"><span class="small fw-semibold">${percent}%</span><span class="small text-muted">complete</span></div>`;
+    }
+
+    function updateStatsCards(filteredCount) {
+      const total = employeesData.length;
+      const activeToday = filteredCount > 0 ? Math.min(filteredCount + 3, total) : 8;
+      const avgProfile = Math.round(employeesData.reduce((s, e) => s + e.profile, 0) / total);
+      const newThisMonth = 4;
+      const statsHtml = `
+        <div class="dashboard-card"><h3>${total}</h3><p><i class="fas fa-users me-1 text-primary"></i> Total workforce</p></div>
+        <div class="dashboard-card"><h3>${activeToday}</h3><p><i class="fas fa-user-check text-success me-1"></i> Active (filtered)</p></div>
+        <div class="dashboard-card"><h3>${avgProfile}%</h3><p><i class="fas fa-chart-simple me-1"></i> Avg. completion</p></div>
+        <div class="dashboard-card"><h3>${newThisMonth}</h3><p><i class="fas fa-calendar-plus me-1"></i> New hires</p></div>
+      `;
+      document.getElementById("statsCards").innerHTML = statsHtml;
+    }
+
+    function renderTables() {
+      const filtered = getFilteredEmployees();
+      updateStatsCards(filtered.length);
+
+      // Dashboard table
+      const dashBody = document.getElementById("dashboardTableBody");
+      if (dashBody) {
+        dashBody.innerHTML = filtered.map(emp => `
+          <tr>
+            <td class="fw-semibold">${emp.id}</td>
+            <td><img src="${emp.avatar}" class="avatar" onerror="this.src='https://randomuser.me/api/portraits/lego/1.jpg'" alt=""> ${emp.name}</td>
+            <td>${emp.designation}</td>
+            <td><span class="badge bg-light text-dark px-3 py-1 rounded-pill">${emp.department}</span></td>
+            <td>${emp.team}</td>
+            <td>${emp.supervisor}</td>
+            <td><i class="far fa-clock me-1 text-secondary"></i>${emp.tenure}</td>
+            <td style="min-width:110px">${renderProfileWidget(emp.profile)}</td>
+          </tr>
+        `).join("");
+      }
+
+      const usersBody = document.getElementById("usersTableBody");
+      if (usersBody) {
+        usersBody.innerHTML = filtered.map(emp => `
+          <tr>
+            <td class="fw-semibold">${emp.id}</td>
+            <td><img src="${emp.avatar}" class="avatar" onerror="this.src='https://randomuser.me/api/portraits/lego/1.jpg'"> ${emp.name}</td>
+            <td>${emp.designation}</td>
+            <td>${emp.department}</td>
+            <td>${emp.team}</td>
+            <td>${emp.supervisor}</td>
+            <td>${emp.tenure}</td>
+            <td>${renderProfileWidget(emp.profile)}</td>
+            <td><button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="app.alertFeature('✏️ Editing ${emp.name}')"><i class="fas fa-pen"></i> Edit</button></td>
+          </tr>
+        `).join("");
+      }
+    }
+
+    function applyFiltersFromUI() {
+      currentFilters = {
+        jobTitle: document.getElementById("filterJobTitle").value.trim(),
+        team: document.getElementById("filterTeam").value.trim(),
+        department: document.getElementById("filterDepartment").value.trim(),
+        shift: document.getElementById("filterShift").value.trim(),
+        city: document.getElementById("filterCity").value.trim(),
+        state: document.getElementById("filterState").value.trim(),
+        religion: document.getElementById("filterReligion").value.trim()
+      };
+      renderTables();
+      app.closeFilterSidebar();
+    }
+
+    function resetFilters() {
+      document.getElementById("filterJobTitle").value = "";
+      document.getElementById("filterTeam").value = "";
+      document.getElementById("filterDepartment").value = "";
+      document.getElementById("filterShift").value = "";
+      document.getElementById("filterCity").value = "";
+      document.getElementById("filterState").value = "";
+      document.getElementById("filterReligion").value = "";
+      currentFilters = { jobTitle:"", team:"", department:"", shift:"", city:"", state:"", religion:"" };
+      renderTables();
+    }
+
+    // Global app object
+    window.app = {
+      showSection(section) {
+        activeSection = section;
+        const dashDiv = document.getElementById("dashboardSection");
+        const usersDiv = document.getElementById("usersSection");
+        if (section === "dashboard") {
+          dashDiv.style.display = "block";
+          usersDiv.style.display = "none";
+        } else {
+          dashDiv.style.display = "none";
+          usersDiv.style.display = "block";
+        }
+        renderTables();
+        if (window.innerWidth <= 768) document.getElementById("sidebar").classList.remove("active");
+      },
+      toggleDropdown(menuId) {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar.classList.contains("collapsed") && window.innerWidth > 768) return;
+        const menu = document.getElementById(menuId);
+        if (!menu) return;
+        const isVisible = menu.style.display === "block";
+        document.querySelectorAll(".submenu").forEach(sub => sub.style.display = "none");
+        if (!isVisible) menu.style.display = "block";
+      },
+      openFilterSidebar() {
+        document.getElementById("filterSidebar").classList.add("active");
+      },
+      closeFilterSidebar() {
+        document.getElementById("filterSidebar").classList.remove("active");
+      },
+      alertFeature(msg) {
+        alert(`✨ ${msg} (interactive demo)`);
+      }
+    };
+
+    // sidebar toggle
+    function toggleSidebarDesktop() {
+      const sidebar = document.getElementById("sidebar");
+      const main = document.getElementById("mainContainer");
+      if (window.innerWidth <= 768) {
+        sidebar.classList.toggle("active");
+        main.style.marginLeft = sidebar.classList.contains("active") ? "280px" : "0px";
+      } else {
+        sidebar.classList.toggle("collapsed");
+        const isCollapsed = sidebar.classList.contains("collapsed");
+        main.style.marginLeft = isCollapsed ? "88px" : "280px";
+        if (isCollapsed) document.querySelectorAll(".submenu").forEach(sub => sub.style.display = "none");
+      }
+    }
+
+    document.getElementById("toggleSidebarBtn").addEventListener("click", toggleSidebarDesktop);
+    document.getElementById("applyFilterBtn").addEventListener("click", applyFiltersFromUI);
+    document.getElementById("resetFilterBtn").addEventListener("click", () => { resetFilters(); app.closeFilterSidebar(); });
+    window.addEventListener("resize", () => {
+      const sidebar = document.getElementById("sidebar");
+      const main = document.getElementById("mainContainer");
+      if (window.innerWidth > 768) {
+        sidebar.classList.remove("active");
+        if (!sidebar.classList.contains("collapsed")) main.style.marginLeft = "280px";
+        else main.style.marginLeft = "88px";
+      } else {
+        main.style.marginLeft = "0px";
+      }
+    });
+    document.addEventListener("click", (e) => {
+      const sidebar = document.getElementById("sidebar");
+      if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !e.target.closest(".toggle-btn")) {
+        sidebar.classList.remove("active");
+      }
+    });
+    // initial
+    renderTables();
+    app.showSection("dashboard");
+    if (window.innerWidth > 768) document.getElementById("mainContainer").style.marginLeft = "280px";
+  })();
+</script>
+</body>
+</html>
