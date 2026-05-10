@@ -1,4 +1,4 @@
-<script>
+
   (function(){
     // ----- enriched employees dataset with extra fields for filtering
     const employeesData = [
@@ -195,4 +195,3 @@
     app.showSection("dashboard");
     if (window.innerWidth > 768) document.getElementById("mainContainer").style.marginLeft = "280px";
   })();
-</scri
