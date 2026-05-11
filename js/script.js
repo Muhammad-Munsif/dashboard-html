@@ -1,4 +1,4 @@
-<script>
+
   (function(){
     // ---------- INITIAL EMPLOYEE DATA (enriched) ----------
     let employeesData = [
@@ -240,4 +240,3 @@
     app.showSection("dashboard");
     if (window.innerWidth > 768) document.getElementById("mainContainer").style.marginLeft = "280px";
   })();
-</script>
