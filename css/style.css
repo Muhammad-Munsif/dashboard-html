@@ -1,4 +1,4 @@
-<style>
+
     * {
       margin: 0;
       padding: 0;
@@ -174,4 +174,4 @@
     .btn-primary-custom { background: #0f172a; border-radius: 40px; }
     .action-icons i { font-size: 1.1rem; cursor: pointer; margin: 0 5px; transition: 0.1s; }
     .action-icons i:hover { transform: scale(1.1); }
-  </style>
+  
