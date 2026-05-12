@@ -1,4 +1,4 @@
- <style>
+ 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
@@ -164,4 +164,4 @@
     .export-btn { background: #10b981; color: white; border: none; }
     .export-btn:hover { background: #059669; color: white; }
     .toast-container { z-index: 1090; }
-  </style>
+  
