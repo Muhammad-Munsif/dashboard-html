@@ -1,4 +1,4 @@
-<script>
+
   (function(){
     let employeesData = [
       { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Super A", supervisor: "Kaylo Margo", tenure: "1 Yr, 2 Mo", profile: 95, shift: "Morning", city: "New York", state: "NY", religion: "Christian", avatar: "https://randomuser.me/api/portraits/women/68.jpg" },
@@ -159,4 +159,3 @@
     employeeModalInstance = new bootstrap.Modal(document.getElementById("employeeModal"));
     renderTables(); app.showSection("dashboard"); if(window.innerWidth>768) document.getElementById("mainContainer").style.marginLeft="280px";
   })();
-</script>
