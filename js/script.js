@@ -1,4 +1,4 @@
-<script>
+
     (function () {
       // Extended employees with permissions
       let employeesData = [
@@ -112,4 +112,4 @@
       permissionsModalInstance = new bootstrap.Modal(document.getElementById("permissionsModal"));
       renderTables(); app.showSection("dashboard"); if (window.innerWidth > 768) document.getElementById("mainContainer").style.marginLeft = "280px";
     })();
-  </script>
+  
