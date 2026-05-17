@@ -1,4 +1,4 @@
-<script>
+
     (function () {
       let employeesData = [
         { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Super A", supervisor: "Kaylo Margo", tenure: "1 Yr, 2 Mo", profile: 95, shift: "Morning", city: "New York", salary: 85000, avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
@@ -72,4 +72,4 @@
       permissionsModalInstance = new bootstrap.Modal(document.getElementById("permissionsModal"));
       renderTables(); app.showSection("dashboard");
     })();
-  </script>
+  
