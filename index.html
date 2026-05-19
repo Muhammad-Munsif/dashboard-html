@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,434 +9,674 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <style>
-    * { font-family: 'Inter', sans-serif; }
-    body { background: #f1f5f9; transition: all 0.3s ease; }
-    
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #f1f5f9;
+      transition: all 0.3s ease;
+    }
+
     /* Dark Mode Styles */
-    body.dark { background: #0f172a; }
-    body.dark .bg-white, body.dark .card-bg, body.dark .modal-content, 
-    body.dark .chart-box, body.dark .filter-sidebar, body.dark .bg-gray-50,
-    body.dark .bg-gray-100 { background-color: #1e293b !important; color: #e2e8f0 !important; }
-    body.dark .text-gray-600, body.dark .text-gray-500, body.dark .text-gray-700 { color: #94a3b8 !important; }
-    body.dark .border-gray-200, body.dark .border { border-color: #334155 !important; }
-    body.dark .table, body.dark .table th, body.dark .table td { 
-      background-color: #1e293b; color: #e2e8f0; border-color: #334155; 
+    body.dark {
+      background: #0f172a;
     }
-    body.dark .table th { background-color: #0f172a; }
-    body.dark .form-control, body.dark .form-select { 
-      background-color: #334155; color: #f1f5f9; border-color: #475569; 
+
+    body.dark .bg-white,
+    body.dark .card-bg,
+    body.dark .modal-content,
+    body.dark .chart-box,
+    body.dark .filter-sidebar,
+    body.dark .bg-gray-50,
+    body.dark .bg-gray-100 {
+      background-color: #1e293b !important;
+      color: #e2e8f0 !important;
     }
-    body.dark .btn-outline-secondary, body.dark .border { border-color: #475569; color: #cbd5e1; }
-    body.dark .permission-badge { background: #334155; color: #a5b4fc; }
-    
+
+    body.dark .text-gray-600,
+    body.dark .text-gray-500,
+    body.dark .text-gray-700 {
+      color: #94a3b8 !important;
+    }
+
+    body.dark .border-gray-200,
+    body.dark .border {
+      border-color: #334155 !important;
+    }
+
+    body.dark .table,
+    body.dark .table th,
+    body.dark .table td {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+
+    body.dark .table th {
+      background-color: #0f172a;
+    }
+
+    body.dark .form-control,
+    body.dark .form-select {
+      background-color: #334155;
+      color: #f1f5f9;
+      border-color: #475569;
+    }
+
+    body.dark .btn-outline-secondary,
+    body.dark .border {
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+
+    body.dark .permission-badge {
+      background: #334155;
+      color: #a5b4fc;
+    }
+
     /* Toast Notification */
-    .toast-notify { 
-      position: fixed; bottom: 24px; right: 24px; z-index: 1200; 
-      background: white; border-radius: 12px; padding: 12px 20px; 
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-left: 4px solid #10b981; 
-      animation: slideIn 0.3s ease; 
+    .toast-notify {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1200;
+      background: white;
+      border-radius: 12px;
+      padding: 12px 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-left: 4px solid #10b981;
+      animation: slideIn 0.3s ease;
     }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
     /* Avatar & Profile Bar */
-    .avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .profile-bar { background: #e4e9f2; border-radius: 20px; height: 6px; width: 100%; overflow: hidden; margin-bottom: 5px; }
-    .bar-fill { height: 6px; border-radius: 20px; background: #10b981; }
-    .low .bar-fill { background: #ef4444; }
-    .medium .bar-fill { background: #f59e0b; }
-    .high .bar-fill { background: #10b981; }
-    
-    /* Action Icons */
-    .action-icons i { font-size: 1.1rem; cursor: pointer; margin: 0 5px; transition: 0.15s; color: #64748b; }
-    .action-icons .fa-edit:hover { color: #10b981; transform: scale(1.15); }
-    .action-icons .fa-trash-alt:hover { color: #ef4444; transform: scale(1.15); }
-    .action-icons .fa-shield-alt:hover { color: #3b82f6; transform: scale(1.15); }
-    
-    /* Permission Badge */
-    .permission-badge { background: #eef2ff; color: #3730a3; border-radius: 20px; padding: 4px 12px; font-size: 0.7rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-    
-    /* Sidebar Styles */
-    .sidebar { transition: transform 0.3s ease-in-out; }
-    @media (max-width: 768px) { 
-      .sidebar { position: fixed; top: 0; left: -280px; height: 100%; z-index: 1100; } 
-      .sidebar.open { left: 0; } 
-      .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1050; } 
-      .overlay.active { display: block; } 
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px;
+      border: 2px solid white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
-    
+
+    .profile-bar {
+      background: #e4e9f2;
+      border-radius: 20px;
+      height: 6px;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+
+    .bar-fill {
+      height: 6px;
+      border-radius: 20px;
+      background: #10b981;
+    }
+
+    .low .bar-fill {
+      background: #ef4444;
+    }
+
+    .medium .bar-fill {
+      background: #f59e0b;
+    }
+
+    .high .bar-fill {
+      background: #10b981;
+    }
+
+    /* Action Icons */
+    .action-icons i {
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin: 0 5px;
+      transition: 0.15s;
+      color: #64748b;
+    }
+
+    .action-icons .fa-edit:hover {
+      color: #10b981;
+      transform: scale(1.15);
+    }
+
+    .action-icons .fa-trash-alt:hover {
+      color: #ef4444;
+      transform: scale(1.15);
+    }
+
+    .action-icons .fa-shield-alt:hover {
+      color: #3b82f6;
+      transform: scale(1.15);
+    }
+
+    /* Permission Badge */
+    .permission-badge {
+      background: #eef2ff;
+      color: #3730a3;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        height: 100%;
+        z-index: 1100;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+      }
+
+      .overlay.active {
+        display: block;
+      }
+    }
+
     /* Filter Sidebar */
-    .filter-sidebar { transition: right 0.3s ease-in-out; }
-    
+    .filter-sidebar {
+      transition: right 0.3s ease-in-out;
+    }
+
     /* Card Hover Effects */
-    .stat-card { transition: all 0.3s ease; }
-    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15); }
-    
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
+    }
+
     /* Table Container */
-    .table-container { overflow-x: auto; }
-    .table { min-width: 800px; }
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .table {
+      min-width: 800px;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- Mobile Overlay -->
-<div id="mobileOverlay" class="overlay" onclick="closeSidebar()"></div>
+  <!-- Mobile Overlay -->
+  <div id="mobileOverlay" class="overlay" onclick="closeSidebar()"></div>
 
-<!-- Sidebar -->
-<div id="sidebar" class="sidebar fixed top-0 left-0 h-full w-72 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl z-50 md:relative md:translate-x-0">
-  <div class="flex flex-col h-full">
-    <div class="p-6 border-b border-white/10">
-      <div class="flex items-center gap-3">
-        <i class="fas fa-chart-line text-2xl text-emerald-400"></i>
-        <span class="text-xl font-bold tracking-tight">Nexus<span class="text-emerald-400">HR</span></span>
-      </div>
-      <p class="text-xs text-gray-400 mt-2">Enterprise Management Suite</p>
-    </div>
-    
-    <nav class="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
-      <div onclick="app.showSection('dashboard')" class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10 transition-all group">
-        <i class="fas fa-chart-pie w-5 text-gray-400 group-hover:text-emerald-400"></i>
-        <span>Dashboard</span>
-      </div>
-      
-      <!-- Workforce Dropdown -->
-      <div>
-        <div onclick="app.toggleDropdown('usersMenu')" class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
-          <div class="flex items-center gap-3"><i class="fas fa-users w-5 text-gray-400"></i><span>Workforce</span></div>
-          <i class="fas fa-chevron-down text-xs arrow transition-transform"></i>
+  <!-- Sidebar -->
+  <div id="sidebar"
+    class="sidebar fixed top-0 left-0 h-full w-72 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl z-50 md:relative md:translate-x-0">
+    <div class="flex flex-col h-full">
+      <div class="p-6 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-chart-line text-2xl text-emerald-400"></i>
+          <span class="text-xl font-bold tracking-tight">Nexus<span class="text-emerald-400">HR</span></span>
         </div>
-        <ul id="usersMenu" class="submenu pl-10 mt-1 space-y-1 hidden">
-          <li onclick="app.showSection('users')" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-id-card w-4 mr-2"></i>All Employees</li>
-          <li onclick="app.openPermissionsModal()" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-lock w-4 mr-2"></i>Permissions</li>
-          <li onclick="app.showHRReport()" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-chart-bar w-4 mr-2"></i>HR Report</li>
-        </ul>
+        <p class="text-xs text-gray-400 mt-2">Enterprise Management Suite</p>
       </div>
-      
-      <!-- Analytics Dropdown -->
-      <div>
-        <div onclick="app.toggleDropdown('analyticsMenu')" class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
-          <div class="flex items-center gap-3"><i class="fas fa-chart-line w-5 text-gray-400"></i><span>Analytics</span></div>
-          <i class="fas fa-chevron-down text-xs arrow"></i>
-        </div>
-        <ul id="analyticsMenu" class="submenu pl-10 mt-1 space-y-1 hidden">
-          <li onclick="app.showRetentionChart()" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-chart-line w-4 mr-2"></i>Retention</li>
-          <li onclick="app.showDepartmentStats()" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-building w-4 mr-2"></i>Department</li>
-          <li onclick="app.showSalaryInsights()" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-dollar-sign w-4 mr-2"></i>Salary Insights</li>
-        </ul>
-      </div>
-      
-      <!-- HR Core Dropdown -->
-      <div>
-        <div onclick="app.toggleDropdown('hrMenu')" class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
-          <div class="flex items-center gap-3"><i class="fas fa-briefcase w-5 text-gray-400"></i><span>HR Core</span></div>
-          <i class="fas fa-chevron-down text-xs arrow"></i>
-        </div>
-        <ul id="hrMenu" class="submenu pl-10 mt-1 space-y-1 hidden">
-          <li onclick="app.alertFeature('VOB Records')" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-folder-open w-4 mr-2"></i>VOB</li>
-          <li onclick="app.alertFeature('Payroll Management')" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-money-bill w-4 mr-2"></i>Payroll</li>
-          <li onclick="app.alertFeature('Recruitment')" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i class="fas fa-user-plus w-4 mr-2"></i>Recruitment</li>
-        </ul>
-      </div>
-      
-      <div onclick="app.showAuditLog()" class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
-        <i class="fas fa-history w-5 text-gray-400"></i><span>Audit Log</span>
-      </div>
-      <div onclick="app.showHelp()" class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
-        <i class="fas fa-question-circle w-5 text-gray-400"></i><span>Help & Support</span>
-      </div>
-    </nav>
-    
-    <div class="p-4 border-t border-white/10 text-xs text-gray-400 text-center">
-      <i class="far fa-copyright mr-1"></i> 2026 NexusHR Pro
-    </div>
-  </div>
-</div>
 
-<!-- Main Content Area -->
-<div class="md:ml-72 min-h-screen flex flex-col">
-  <!-- Navbar -->
-  <nav class="bg-white shadow-sm border-b sticky top-0 z-40">
-    <div class="px-4 sm:px-6 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <button id="mobileMenuBtn" class="md:hidden text-gray-700 text-xl focus:outline-none"><i class="fas fa-bars"></i></button>
-        <h1 class="text-lg font-semibold text-gray-800">Employee Management System</h1>
-      </div>
-      <div class="flex items-center gap-4">
-        <button id="themeToggle" class="bg-gray-100 p-2 rounded-full text-gray-700 hover:bg-gray-200 transition"><i class="fas fa-moon"></i></button>
-        <div class="flex items-center gap-2 border-l pl-4">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center text-white"><i class="fas fa-user-cog text-sm"></i></div>
-          <span class="text-sm font-medium hidden sm:inline text-gray-700">Admin Portal</span>
+      <nav class="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+        <div onclick="app.showSection('dashboard')"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10 transition-all group">
+          <i class="fas fa-chart-pie w-5 text-gray-400 group-hover:text-emerald-400"></i>
+          <span>Dashboard</span>
         </div>
-      </div>
-    </div>
-  </nav>
 
-  <!-- Main Content -->
-  <main class="flex-1 p-4 md:p-6 lg:p-8">
-    <!-- Dashboard Section -->
-    <div id="dashboardSection">
-      <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+        <!-- Workforce Dropdown -->
         <div>
-          <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-chart-line text-emerald-600 mr-2"></i>HR Dashboard</h2>
-          <p class="text-gray-500 text-sm mt-1">Real-time workforce metrics & analytics</p>
+          <div onclick="app.toggleDropdown('usersMenu')"
+            class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
+            <div class="flex items-center gap-3"><i class="fas fa-users w-5 text-gray-400"></i><span>Workforce</span>
+            </div>
+            <i class="fas fa-chevron-down text-xs arrow transition-transform"></i>
+          </div>
+          <ul id="usersMenu" class="submenu pl-10 mt-1 space-y-1 hidden">
+            <li onclick="app.showSection('users')"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-id-card w-4 mr-2"></i>All Employees</li>
+            <li onclick="app.openPermissionsModal()"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-lock w-4 mr-2"></i>Permissions</li>
+            <li onclick="app.showHRReport()" class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-chart-bar w-4 mr-2"></i>HR Report</li>
+          </ul>
         </div>
-        <div class="flex gap-2 flex-wrap">
-          <button onclick="app.openFilterSidebar()" class="bg-white border border-gray-300 px-4 py-2 rounded-full text-sm shadow-sm hover:shadow transition"><i class="fas fa-sliders-h mr-2"></i>Filter</button>
-          <button onclick="app.openEmployeeModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-full text-sm shadow-sm hover:bg-emerald-700 transition"><i class="fas fa-plus mr-2"></i>Add Employee</button>
-          <button onclick="app.exportToCSV()" class="bg-white border border-gray-300 px-4 py-2 rounded-full text-sm shadow-sm hover:shadow transition"><i class="fas fa-download mr-2"></i>Export CSV</button>
-        </div>
-      </div>
-      
-      <!-- Stats Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="statsCards"></div>
-      
-      <!-- Charts Row -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div class="bg-white rounded-2xl p-5 shadow-sm border">
-          <h6 class="font-bold mb-3"><i class="fas fa-chart-pie text-emerald-500 mr-2"></i>Profile Completion Distribution</h6>
-          <div id="profileDistChart"></div>
-        </div>
-        <div class="bg-white rounded-2xl p-5 shadow-sm border">
-          <h6 class="font-bold mb-3"><i class="fas fa-building text-blue-500 mr-2"></i>Department Distribution</h6>
-          <div id="deptChart"></div>
-        </div>
-      </div>
-      
-      <!-- Active Workforce Table -->
-      <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-        <div class="px-5 py-4 border-b font-semibold text-gray-700"><i class="fas fa-users mr-2"></i>Active Workforce</div>
-        <div class="table-container">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr><th>ID</th><th>Employee</th><th>Role</th><th>Department</th><th>Team</th><th>Supervisor</th><th>Tenure</th><th>Profile</th></tr>
-            </thead>
-            <tbody id="dashboardTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
 
-    <!-- Users Section (Employee Directory) -->
-    <div id="usersSection" style="display: none;">
-      <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+        <!-- Analytics Dropdown -->
         <div>
-          <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-address-card mr-2"></i>Employee Directory</h2>
-          <p class="text-gray-500 text-sm mt-1">Manage employees with full CRUD operations</p>
+          <div onclick="app.toggleDropdown('analyticsMenu')"
+            class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
+            <div class="flex items-center gap-3"><i
+                class="fas fa-chart-line w-5 text-gray-400"></i><span>Analytics</span></div>
+            <i class="fas fa-chevron-down text-xs arrow"></i>
+          </div>
+          <ul id="analyticsMenu" class="submenu pl-10 mt-1 space-y-1 hidden">
+            <li onclick="app.showRetentionChart()"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-chart-line w-4 mr-2"></i>Retention</li>
+            <li onclick="app.showDepartmentStats()"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-building w-4 mr-2"></i>Department</li>
+            <li onclick="app.showSalaryInsights()"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-dollar-sign w-4 mr-2"></i>Salary Insights</li>
+          </ul>
         </div>
-        <div class="flex gap-2 flex-wrap">
-          <button onclick="app.openFilterSidebar()" class="bg-white border border-gray-300 rounded-full px-4 py-2 text-sm"><i class="fas fa-filter mr-2"></i>Filter</button>
-          <button onclick="app.openEmployeeModal()" class="bg-emerald-600 text-white rounded-full px-4 py-2 text-sm"><i class="fas fa-user-plus mr-2"></i>New Employee</button>
-          <button onclick="app.exportToCSV()" class="bg-white border border-gray-300 rounded-full px-4 py-2 text-sm"><i class="fas fa-download mr-2"></i>Export</button>
-        </div>
-      </div>
-      <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-        <div class="table-container">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr><th>ID</th><th>Name</th><th>Designation</th><th>Dept</th><th>Team</th><th>Supervisor</th><th>Tenure</th><th>Profile</th><th>Role</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="usersTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 py-4 text-center text-gray-500 text-sm mt-4">
-    <div class="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-      <span><i class="far fa-copyright mr-1"></i> 2026 NexusHR Pro — Enterprise Employee Management Suite</span>
-      <div class="flex gap-4">
-        <i class="fab fa-twitter cursor-pointer hover:text-emerald-600"></i>
-        <i class="fab fa-linkedin cursor-pointer hover:text-emerald-600"></i>
-        <i class="fab fa-github cursor-pointer hover:text-emerald-600"></i>
-      </div>
-    </div>
-  </footer>
-</div>
-
-<!-- Filter Sidebar -->
-<div id="filterSidebar" class="filter-sidebar fixed top-0 right-0 w-96 h-full bg-white shadow-2xl z-50 p-6 transform translate-x-full">
-  <div class="flex justify-between items-center border-b pb-3">
-    <h5 class="font-bold"><i class="fas fa-sliders-h mr-2"></i>Advanced Filters</h5>
-    <button onclick="app.closeFilterSidebar()" class="text-gray-500"><i class="fas fa-times"></i></button>
-  </div>
-  <div class="mt-4 space-y-3">
-    <input type="text" id="filterJobTitle" class="form-control" placeholder="Job Title / Designation">
-    <input type="text" id="filterDepartment" class="form-control" placeholder="Department">
-    <input type="text" id="filterTeam" class="form-control" placeholder="Team Name">
-    <input type="text" id="filterCity" class="form-control" placeholder="City">
-  </div>
-  <div class="mt-6 flex gap-3">
-    <button id="applyFilterBtn" class="bg-gray-900 text-white rounded-full px-4 py-2 w-full">Apply Filters</button>
-    <button id="resetFilterBtn" class="border border-gray-300 rounded-full px-4 py-2 w-full">Reset All</button>
-  </div>
-</div>
-
-<!-- Employee Modal (Add/Edit) -->
-<div class="modal fade" id="employeeModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content rounded-2xl">
-      <div class="modal-header bg-gray-900 text-white rounded-t-2xl">
-        <h5 class="modal-title" id="modalTitle"><i class="fas fa-user-plus mr-2"></i>Employee</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body p-4">
-        <div class="row g-3">
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-id-card mr-1"></i>Employee ID</label><input type="text" id="empId" class="form-control" readonly></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-user mr-1"></i>Full Name <span class="text-danger">*</span></label><input type="text" id="empName" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-briefcase mr-1"></i>Designation</label><input type="text" id="empDesignation" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-building mr-1"></i>Department</label><input type="text" id="empDepartment" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-users mr-1"></i>Team</label><input type="text" id="empTeam" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-user-tie mr-1"></i>Supervisor</label><input type="text" id="empSupervisor" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-clock mr-1"></i>Tenure</label><input type="text" id="empTenure" class="form-control" placeholder="e.g., 2 Yr, 5 Mo"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-chart-line mr-1"></i>Profile %</label><input type="number" id="empProfile" class="form-control" min="0" max="100" value="50"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-calendar-alt mr-1"></i>Shift</label><input type="text" id="empShift" class="form-control" placeholder="Morning/Evening/Night"></div>
-          <div class="col-md-6"><label class="form-label"><i class="fas fa-city mr-1"></i>City</label><input type="text" id="empCity" class="form-control"></div>
-          <div class="col-12"><label class="form-label"><i class="fas fa-image mr-1"></i>Avatar URL</label><input type="text" id="empAvatar" class="form-control" placeholder="https://randomuser.me/api/portraits/..."></div>
+        <!-- HR Core Dropdown -->
+        <div>
+          <div onclick="app.toggleDropdown('hrMenu')"
+            class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
+            <div class="flex items-center gap-3"><i class="fas fa-briefcase w-5 text-gray-400"></i><span>HR Core</span>
+            </div>
+            <i class="fas fa-chevron-down text-xs arrow"></i>
+          </div>
+          <ul id="hrMenu" class="submenu pl-10 mt-1 space-y-1 hidden">
+            <li onclick="app.alertFeature('VOB Records')"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-folder-open w-4 mr-2"></i>VOB</li>
+            <li onclick="app.alertFeature('Payroll Management')"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-money-bill w-4 mr-2"></i>Payroll</li>
+            <li onclick="app.alertFeature('Recruitment')"
+              class="px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer text-sm"><i
+                class="fas fa-user-plus w-4 mr-2"></i>Recruitment</li>
+          </ul>
         </div>
-      </div>
-      <div class="modal-footer border-0 pb-4">
-        <button class="btn btn-outline-secondary rounded-full px-4" data-bs-dismiss="modal">Cancel</button>
-        <button class="btn btn-dark rounded-full px-4" id="saveEmployeeBtn"><i class="fas fa-save mr-1"></i>Save Changes</button>
+
+        <div onclick="app.showAuditLog()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
+          <i class="fas fa-history w-5 text-gray-400"></i><span>Audit Log</span>
+        </div>
+        <div onclick="app.showHelp()"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10">
+          <i class="fas fa-question-circle w-5 text-gray-400"></i><span>Help & Support</span>
+        </div>
+      </nav>
+
+      <div class="p-4 border-t border-white/10 text-xs text-gray-400 text-center">
+        <i class="far fa-copyright mr-1"></i> 2026 NexusHR Pro
       </div>
     </div>
   </div>
-</div>
 
-<!-- Permissions Modal -->
-<div class="modal fade" id="permissionsModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-2xl">
-      <div class="modal-header bg-gray-900 text-white rounded-t-2xl">
-        <h5 class="modal-title"><i class="fas fa-shield-alt mr-2"></i>Role Permissions Manager</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body p-4">
-        <div id="permissionsList" class="max-h-96 overflow-y-auto"></div>
-        <hr class="my-3">
-        <div class="mt-3">
-          <label class="form-label fw-semibold">Assign Role to User</label>
-          <div class="input-group">
-            <input type="text" id="assignRoleEmpId" class="form-control" placeholder="Employee ID">
-            <select id="assignRoleSelect" class="form-select">
-              <option value="viewer">Viewer <i class="fas fa-eye"></i></option>
-              <option value="editor">Editor <i class="fas fa-edit"></i></option>
-              <option value="admin">Admin <i class="fas fa-crown"></i></option>
-            </select>
-            <button class="btn btn-dark" onclick="app.assignRole()">Assign</button>
+  <!-- Main Content Area -->
+  <div class="md:ml-72 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-40">
+      <div class="px-4 sm:px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button id="mobileMenuBtn" class="md:hidden text-gray-700 text-xl focus:outline-none"><i
+              class="fas fa-bars"></i></button>
+          <h1 class="text-lg font-semibold text-gray-800">Employee Management System</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <button id="themeToggle" class="bg-gray-100 p-2 rounded-full text-gray-700 hover:bg-gray-200 transition"><i
+              class="fas fa-moon"></i></button>
+          <div class="flex items-center gap-2 border-l pl-4">
+            <div
+              class="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center text-white">
+              <i class="fas fa-user-cog text-sm"></i></div>
+            <span class="text-sm font-medium hidden sm:inline text-gray-700">Admin Portal</span>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary rounded-full" data-bs-dismiss="modal">Close</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 md:p-6 lg:p-8">
+      <!-- Dashboard Section -->
+      <div id="dashboardSection">
+        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-chart-line text-emerald-600 mr-2"></i>HR
+              Dashboard</h2>
+            <p class="text-gray-500 text-sm mt-1">Real-time workforce metrics & analytics</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="app.openFilterSidebar()"
+              class="bg-white border border-gray-300 px-4 py-2 rounded-full text-sm shadow-sm hover:shadow transition"><i
+                class="fas fa-sliders-h mr-2"></i>Filter</button>
+            <button onclick="app.openEmployeeModal()"
+              class="bg-emerald-600 text-white px-4 py-2 rounded-full text-sm shadow-sm hover:bg-emerald-700 transition"><i
+                class="fas fa-plus mr-2"></i>Add Employee</button>
+            <button onclick="app.exportToCSV()"
+              class="bg-white border border-gray-300 px-4 py-2 rounded-full text-sm shadow-sm hover:shadow transition"><i
+                class="fas fa-download mr-2"></i>Export CSV</button>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="statsCards"></div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white rounded-2xl p-5 shadow-sm border">
+            <h6 class="font-bold mb-3"><i class="fas fa-chart-pie text-emerald-500 mr-2"></i>Profile Completion
+              Distribution</h6>
+            <div id="profileDistChart"></div>
+          </div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border">
+            <h6 class="font-bold mb-3"><i class="fas fa-building text-blue-500 mr-2"></i>Department Distribution</h6>
+            <div id="deptChart"></div>
+          </div>
+        </div>
+
+        <!-- Active Workforce Table -->
+        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+          <div class="px-5 py-4 border-b font-semibold text-gray-700"><i class="fas fa-users mr-2"></i>Active Workforce
+          </div>
+          <div class="table-container">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Employee</th>
+                  <th>Role</th>
+                  <th>Department</th>
+                  <th>Team</th>
+                  <th>Supervisor</th>
+                  <th>Tenure</th>
+                  <th>Profile</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Section (Employee Directory) -->
+      <div id="usersSection" style="display: none;">
+        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-address-card mr-2"></i>Employee Directory</h2>
+            <p class="text-gray-500 text-sm mt-1">Manage employees with full CRUD operations</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="app.openFilterSidebar()"
+              class="bg-white border border-gray-300 rounded-full px-4 py-2 text-sm"><i
+                class="fas fa-filter mr-2"></i>Filter</button>
+            <button onclick="app.openEmployeeModal()"
+              class="bg-emerald-600 text-white rounded-full px-4 py-2 text-sm"><i class="fas fa-user-plus mr-2"></i>New
+              Employee</button>
+            <button onclick="app.exportToCSV()"
+              class="bg-white border border-gray-300 rounded-full px-4 py-2 text-sm"><i
+                class="fas fa-download mr-2"></i>Export</button>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+          <div class="table-container">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Designation</th>
+                  <th>Dept</th>
+                  <th>Team</th>
+                  <th>Supervisor</th>
+                  <th>Tenure</th>
+                  <th>Profile</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-gray-500 text-sm mt-4">
+      <div class="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <span><i class="far fa-copyright mr-1"></i> 2026 NexusHR Pro — Enterprise Employee Management Suite</span>
+        <div class="flex gap-4">
+          <i class="fab fa-twitter cursor-pointer hover:text-emerald-600"></i>
+          <i class="fab fa-linkedin cursor-pointer hover:text-emerald-600"></i>
+          <i class="fab fa-github cursor-pointer hover:text-emerald-600"></i>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Filter Sidebar -->
+  <div id="filterSidebar"
+    class="filter-sidebar fixed top-0 right-0 w-96 h-full bg-white shadow-2xl z-50 p-6 transform translate-x-full">
+    <div class="flex justify-between items-center border-b pb-3">
+      <h5 class="font-bold"><i class="fas fa-sliders-h mr-2"></i>Advanced Filters</h5>
+      <button onclick="app.closeFilterSidebar()" class="text-gray-500"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mt-4 space-y-3">
+      <input type="text" id="filterJobTitle" class="form-control" placeholder="Job Title / Designation">
+      <input type="text" id="filterDepartment" class="form-control" placeholder="Department">
+      <input type="text" id="filterTeam" class="form-control" placeholder="Team Name">
+      <input type="text" id="filterCity" class="form-control" placeholder="City">
+    </div>
+    <div class="mt-6 flex gap-3">
+      <button id="applyFilterBtn" class="bg-gray-900 text-white rounded-full px-4 py-2 w-full">Apply Filters</button>
+      <button id="resetFilterBtn" class="border border-gray-300 rounded-full px-4 py-2 w-full">Reset All</button>
+    </div>
+  </div>
+
+  <!-- Employee Modal (Add/Edit) -->
+  <div class="modal fade" id="employeeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-2xl">
+        <div class="modal-header bg-gray-900 text-white rounded-t-2xl">
+          <h5 class="modal-title" id="modalTitle"><i class="fas fa-user-plus mr-2"></i>Employee</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-id-card mr-1"></i>Employee ID</label><input
+                type="text" id="empId" class="form-control" readonly></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-user mr-1"></i>Full Name <span
+                  class="text-danger">*</span></label><input type="text" id="empName" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label"><i
+                  class="fas fa-briefcase mr-1"></i>Designation</label><input type="text" id="empDesignation"
+                class="form-control"></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-building mr-1"></i>Department</label><input
+                type="text" id="empDepartment" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-users mr-1"></i>Team</label><input
+                type="text" id="empTeam" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-user-tie mr-1"></i>Supervisor</label><input
+                type="text" id="empSupervisor" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-clock mr-1"></i>Tenure</label><input
+                type="text" id="empTenure" class="form-control" placeholder="e.g., 2 Yr, 5 Mo"></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-chart-line mr-1"></i>Profile
+                %</label><input type="number" id="empProfile" class="form-control" min="0" max="100" value="50"></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-calendar-alt mr-1"></i>Shift</label><input
+                type="text" id="empShift" class="form-control" placeholder="Morning/Evening/Night"></div>
+            <div class="col-md-6"><label class="form-label"><i class="fas fa-city mr-1"></i>City</label><input
+                type="text" id="empCity" class="form-control"></div>
+            <div class="col-12"><label class="form-label"><i class="fas fa-image mr-1"></i>Avatar URL</label><input
+                type="text" id="empAvatar" class="form-control" placeholder="https://randomuser.me/api/portraits/...">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pb-4">
+          <button class="btn btn-outline-secondary rounded-full px-4" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-dark rounded-full px-4" id="saveEmployeeBtn"><i class="fas fa-save mr-1"></i>Save
+            Changes</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-(function() {
-  // Employee Data
-  let employeesData = [
-    { id:"0001", name:"Anika Vaccaro", designation:"Manager", department:"Operations", team:"Super A", supervisor:"Kaylo Margo", tenure:"1 Yr, 2 Mo", profile:95, shift:"Morning", city:"New York", salary:85000, avatar:"https://randomuser.me/api/portraits/women/68.jpg", role:"admin" },
-    { id:"0002", name:"Chance Stanton", designation:"Department Head", department:"HR", team:"Super B", supervisor:"Ayson Westervelt", tenure:"3 Yr, 6 Mo", profile:45, shift:"Evening", city:"Austin", salary:75000, avatar:"https://randomuser.me/api/portraits/men/32.jpg", role:"editor" },
-    { id:"0003", name:"Gretchen Lubin", designation:"Team Lead", department:"Operations", team:"Super C", supervisor:"Ryan Vaccaro", tenure:"2 Yr", profile:90, shift:"Morning", city:"Seattle", salary:72000, avatar:"https://randomuser.me/api/portraits/women/44.jpg", role:"editor" },
-    { id:"0004", name:"Roger Westervelt", designation:"VOB Specialist", department:"Operations", team:"Super D", supervisor:"Anika Gold", tenure:"1 Yr, 2 Mo", profile:93, shift:"Night", city:"Chicago", salary:65000, avatar:"https://randomuser.me/api/portraits/men/45.jpg", role:"viewer" },
-    { id:"0005", name:"Tatiana Dias", designation:"Account Manager", department:"Operations", team:"Super E", supervisor:"Angel Levin", tenure:"1 Yr, 1 Mo", profile:15, shift:"Morning", city:"Miami", salary:68000, avatar:"https://randomuser.me/api/portraits/women/29.jpg", role:"viewer" },
-    { id:"0006", name:"Marcus Chen", designation:"Senior Analyst", department:"Finance", team:"Alpha", supervisor:"Linda Wu", tenure:"2 Yr, 4 Mo", profile:88, shift:"Morning", city:"San Francisco", salary:82000, avatar:"https://randomuser.me/api/portraits/men/22.jpg", role:"editor" },
-    { id:"0007", name:"Sophia Rodriguez", designation:"HR Generalist", department:"HR", team:"Talent Squad", supervisor:"Chance Stanton", tenure:"1 Yr", profile:72, shift:"Evening", city:"Los Angeles", salary:62000, avatar:"https://randomuser.me/api/portraits/women/90.jpg", role:"viewer" },
-    { id:"0008", name:"James Okafor", designation:"IT Support", department:"Technology", team:"TechOps", supervisor:"Rita Blake", tenure:"6 Mo", profile:60, shift:"Night", city:"Houston", salary:58000, avatar:"https://randomuser.me/api/portraits/men/55.jpg", role:"viewer" },
-    { id:"0009", name:"Elena Park", designation:"Product Owner", department:"Product", team:"Innovate", supervisor:"Marcus Chen", tenure:"8 Mo", profile:82, shift:"Morning", city:"Seattle", salary:90000, avatar:"https://randomuser.me/api/portraits/women/12.jpg", role:"editor" }
-  ];
-  
-  let auditLog = [];
-  let currentFilters = { jobTitle:"", department:"", team:"", city:"" };
-  let employeeModal = null, permissionsModal = null, isEditMode = false;
-  
-  // Helper Functions
-  function addLog(action, details) { auditLog.unshift({ timestamp: new Date().toLocaleString(), action, details }); if(auditLog.length>20) auditLog.pop(); }
-  function getFiltered() { return employeesData.filter(e => (!currentFilters.jobTitle || e.designation.toLowerCase().includes(currentFilters.jobTitle.toLowerCase())) && (!currentFilters.department || e.department.toLowerCase().includes(currentFilters.department.toLowerCase())) && (!currentFilters.team || e.team.toLowerCase().includes(currentFilters.team.toLowerCase())) && (!currentFilters.city || e.city.toLowerCase().includes(currentFilters.city.toLowerCase()))); }
-  function profileClass(p) { return p<40 ? "low" : p<70 ? "medium" : "high"; }
-  function renderProfile(p) { let cls=profileClass(p); return `<div class="profile-bar ${cls}"><div class="bar-fill" style="width:${p}%"></div></div><div class="text-xs font-medium mt-1">${p}%</div>`; }
-  function getRoleBadge(r) { let icons={admin:'<i class="fas fa-crown"></i>',editor:'<i class="fas fa-edit"></i>',viewer:'<i class="fas fa-eye"></i>'}; return `<span class="permission-badge">${icons[r]||icons.viewer} ${r.toUpperCase()}</span>`; }
-  function showToast(msg) { let t=document.createElement("div"); t.className="toast-notify"; t.innerHTML=`<i class="fas fa-check-circle mr-2 text-emerald-500"></i>${msg}`; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
-  
-  // Render Functions
-  function renderCardsAndStats() {
-    let filtered=getFiltered(), total=employeesData.length, avgProfile=Math.round(employeesData.reduce((a,b)=>a+b.profile,0)/total);
-    let avgSalary=Math.round(employeesData.reduce((a,b)=>a+(b.salary||0),0)/total);
-    document.getElementById("statsCards").innerHTML = `
+  <!-- Permissions Modal -->
+  <div class="modal fade" id="permissionsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-2xl">
+        <div class="modal-header bg-gray-900 text-white rounded-t-2xl">
+          <h5 class="modal-title"><i class="fas fa-shield-alt mr-2"></i>Role Permissions Manager</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="permissionsList" class="max-h-96 overflow-y-auto"></div>
+          <hr class="my-3">
+          <div class="mt-3">
+            <label class="form-label fw-semibold">Assign Role to User</label>
+            <div class="input-group">
+              <input type="text" id="assignRoleEmpId" class="form-control" placeholder="Employee ID">
+              <select id="assignRoleSelect" class="form-select">
+                <option value="viewer">Viewer <i class="fas fa-eye"></i></option>
+                <option value="editor">Editor <i class="fas fa-edit"></i></option>
+                <option value="admin">Admin <i class="fas fa-crown"></i></option>
+              </select>
+              <button class="btn btn-dark" onclick="app.assignRole()">Assign</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary rounded-full" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      // Employee Data
+      let employeesData = [
+        { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Super A", supervisor: "Kaylo Margo", tenure: "1 Yr, 2 Mo", profile: 95, shift: "Morning", city: "New York", salary: 85000, avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
+        { id: "0002", name: "Chance Stanton", designation: "Department Head", department: "HR", team: "Super B", supervisor: "Ayson Westervelt", tenure: "3 Yr, 6 Mo", profile: 45, shift: "Evening", city: "Austin", salary: 75000, avatar: "https://randomuser.me/api/portraits/men/32.jpg", role: "editor" },
+        { id: "0003", name: "Gretchen Lubin", designation: "Team Lead", department: "Operations", team: "Super C", supervisor: "Ryan Vaccaro", tenure: "2 Yr", profile: 90, shift: "Morning", city: "Seattle", salary: 72000, avatar: "https://randomuser.me/api/portraits/women/44.jpg", role: "editor" },
+        { id: "0004", name: "Roger Westervelt", designation: "VOB Specialist", department: "Operations", team: "Super D", supervisor: "Anika Gold", tenure: "1 Yr, 2 Mo", profile: 93, shift: "Night", city: "Chicago", salary: 65000, avatar: "https://randomuser.me/api/portraits/men/45.jpg", role: "viewer" },
+        { id: "0005", name: "Tatiana Dias", designation: "Account Manager", department: "Operations", team: "Super E", supervisor: "Angel Levin", tenure: "1 Yr, 1 Mo", profile: 15, shift: "Morning", city: "Miami", salary: 68000, avatar: "https://randomuser.me/api/portraits/women/29.jpg", role: "viewer" },
+        { id: "0006", name: "Marcus Chen", designation: "Senior Analyst", department: "Finance", team: "Alpha", supervisor: "Linda Wu", tenure: "2 Yr, 4 Mo", profile: 88, shift: "Morning", city: "San Francisco", salary: 82000, avatar: "https://randomuser.me/api/portraits/men/22.jpg", role: "editor" },
+        { id: "0007", name: "Sophia Rodriguez", designation: "HR Generalist", department: "HR", team: "Talent Squad", supervisor: "Chance Stanton", tenure: "1 Yr", profile: 72, shift: "Evening", city: "Los Angeles", salary: 62000, avatar: "https://randomuser.me/api/portraits/women/90.jpg", role: "viewer" },
+        { id: "0008", name: "James Okafor", designation: "IT Support", department: "Technology", team: "TechOps", supervisor: "Rita Blake", tenure: "6 Mo", profile: 60, shift: "Night", city: "Houston", salary: 58000, avatar: "https://randomuser.me/api/portraits/men/55.jpg", role: "viewer" },
+        { id: "0009", name: "Elena Park", designation: "Product Owner", department: "Product", team: "Innovate", supervisor: "Marcus Chen", tenure: "8 Mo", profile: 82, shift: "Morning", city: "Seattle", salary: 90000, avatar: "https://randomuser.me/api/portraits/women/12.jpg", role: "editor" }
+      ];
+
+      let auditLog = [];
+      let currentFilters = { jobTitle: "", department: "", team: "", city: "" };
+      let employeeModal = null, permissionsModal = null, isEditMode = false;
+
+      // Helper Functions
+      function addLog(action, details) { auditLog.unshift({ timestamp: new Date().toLocaleString(), action, details }); if (auditLog.length > 20) auditLog.pop(); }
+      function getFiltered() { return employeesData.filter(e => (!currentFilters.jobTitle || e.designation.toLowerCase().includes(currentFilters.jobTitle.toLowerCase())) && (!currentFilters.department || e.department.toLowerCase().includes(currentFilters.department.toLowerCase())) && (!currentFilters.team || e.team.toLowerCase().includes(currentFilters.team.toLowerCase())) && (!currentFilters.city || e.city.toLowerCase().includes(currentFilters.city.toLowerCase()))); }
+      function profileClass(p) { return p < 40 ? "low" : p < 70 ? "medium" : "high"; }
+      function renderProfile(p) { let cls = profileClass(p); return `<div class="profile-bar ${cls}"><div class="bar-fill" style="width:${p}%"></div></div><div class="text-xs font-medium mt-1">${p}%</div>`; }
+      function getRoleBadge(r) { let icons = { admin: '<i class="fas fa-crown"></i>', editor: '<i class="fas fa-edit"></i>', viewer: '<i class="fas fa-eye"></i>' }; return `<span class="permission-badge">${icons[r] || icons.viewer} ${r.toUpperCase()}</span>`; }
+      function showToast(msg) { let t = document.createElement("div"); t.className = "toast-notify"; t.innerHTML = `<i class="fas fa-check-circle mr-2 text-emerald-500"></i>${msg}`; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
+
+      // Render Functions
+      function renderCardsAndStats() {
+        let filtered = getFiltered(), total = employeesData.length, avgProfile = Math.round(employeesData.reduce((a, b) => a + b.profile, 0) / total);
+        let avgSalary = Math.round(employeesData.reduce((a, b) => a + (b.salary || 0), 0) / total);
+        document.getElementById("statsCards").innerHTML = `
       <div class="bg-white p-5 rounded-2xl shadow-sm border stat-card"><i class="fas fa-users text-3xl text-emerald-500"></i><h3 class="text-2xl font-bold mt-2">${total}</h3><p class="text-gray-500 text-sm">Total Workforce</p><span class="text-xs text-green-600"><i class="fas fa-arrow-up"></i> +12%</span></div>
-      <div class="bg-white p-5 rounded-2xl shadow-sm border stat-card"><i class="fas fa-dollar-sign text-3xl text-blue-500"></i><h3 class="text-2xl font-bold mt-2">$${(avgSalary/1000).toFixed(0)}k</h3><p class="text-gray-500 text-sm">Avg Salary</p><span class="text-xs text-green-600"><i class="fas fa-chart-line"></i> Competitive</span></div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border stat-card"><i class="fas fa-dollar-sign text-3xl text-blue-500"></i><h3 class="text-2xl font-bold mt-2">$${(avgSalary / 1000).toFixed(0)}k</h3><p class="text-gray-500 text-sm">Avg Salary</p><span class="text-xs text-green-600"><i class="fas fa-chart-line"></i> Competitive</span></div>
       <div class="bg-white p-5 rounded-2xl shadow-sm border stat-card"><i class="fas fa-chart-line text-3xl text-purple-500"></i><h3 class="text-2xl font-bold mt-2">${avgProfile}%</h3><p class="text-gray-500 text-sm">Avg Profile</p><span class="text-xs text-green-600"><i class="fas fa-arrow-up"></i> Engaged</span></div>
-      <div class="bg-white p-5 rounded-2xl shadow-sm border stat-card"><i class="fas fa-medal text-3xl text-yellow-500"></i><h3 class="text-2xl font-bold mt-2">${employeesData.filter(e=>e.profile>=80).length}</h3><p class="text-gray-500 text-sm">High Performers</p><span class="text-xs text-green-600"><i class="fas fa-star"></i> Top Talent</span></div>`;
-    
-    let low=employeesData.filter(e=>e.profile<40).length, mid=employeesData.filter(e=>e.profile>=40&&e.profile<70).length, high=employeesData.filter(e=>e.profile>=70).length, tot=employeesData.length;
-    document.getElementById("profileDistChart").innerHTML = `<div class="mb-2"><i class="fas fa-chart-line text-red-500 mr-2"></i>Low (&lt;40%): ${low} (${Math.round(low/tot*100)}%)<div class="progress mt-1 h-1"><div class="progress-bar bg-red-500" style="width:${low/tot*100}%"></div></div></div><div class="mb-2"><i class="fas fa-chart-line text-yellow-500 mr-2"></i>Medium (40-69%): ${mid} (${Math.round(mid/tot*100)}%)<div class="progress mt-1 h-1"><div class="progress-bar bg-yellow-500" style="width:${mid/tot*100}%"></div></div></div><div><i class="fas fa-chart-line text-green-500 mr-2"></i>High (≥70%): ${high} (${Math.round(high/tot*100)}%)<div class="progress mt-1 h-1"><div class="progress-bar bg-green-500" style="width:${high/tot*100}%"></div></div></div>`;
-    
-    let deptMap=new Map(); employeesData.forEach(e=>deptMap.set(e.department,(deptMap.get(e.department)||0)+1));
-    document.getElementById("deptChart").innerHTML = Array.from(deptMap.entries()).map(([dept,count])=>`<div class="flex justify-between mb-1"><span><i class="fas fa-building mr-2"></i>${dept}</span><span class="badge bg-secondary rounded-pill">${count}</span></div><div class="progress mb-2 h-1"><div class="progress-bar bg-info" style="width:${count/tot*100}%"></div></div>`).join('');
-  }
-  
-  function renderTables() {
-    let filtered=getFiltered(); renderCardsAndStats();
-    document.getElementById("dashboardTableBody").innerHTML = filtered.map(e=>`<tr><td class="fw-semibold">${e.id}</td><td><img src="${e.avatar}" class="avatar" onerror="this.src='https://randomuser.me/api/portraits/lego/1.jpg'"> ${e.name}</td><td>${e.designation}</td><td><span class="badge bg-light border px-3 py-1">${e.department}</span></td><td>${e.team}</td><td>${e.supervisor}</td><td><i class="far fa-calendar-alt mr-1"></i>${e.tenure}</td><td style="min-width:100px">${renderProfile(e.profile)}</td></tr>`).join("");
-    document.getElementById("usersTableBody").innerHTML = filtered.map(e=>`<tr><td class="fw-semibold">${e.id}</td><td><img src="${e.avatar}" class="avatar"> ${e.name}</td><td>${e.designation}</td><td>${e.department}</td><td>${e.team}</td><td>${e.supervisor}</td><td>${e.tenure}</td><td>${renderProfile(e.profile)}</td><td>${getRoleBadge(e.role)}</td><td class="action-icons"><i class="fas fa-edit text-primary" onclick="app.editEmployee('${e.id}')" title="Edit"></i> <i class="fas fa-trash-alt text-danger" onclick="app.deleteEmployee('${e.id}')" title="Delete"></i> <i class="fas fa-shield-alt" onclick="app.openPermissionsForUser('${e.id}')" title="Permissions"></i></td></tr>`).join("");
-  }
-  
-  // CRUD Operations
-  function genId() { let max=0; employeesData.forEach(e=>{let n=parseInt(e.id); if(!isNaN(n)&&n>max)max=n;}); return String(max+1).padStart(4,'0'); }
-  function openModal(id=null) { isEditMode=!!id; document.getElementById("modalTitle").innerHTML=isEditMode?'<i class="fas fa-pen mr-2"></i>Edit Employee':'<i class="fas fa-user-plus mr-2"></i>Add Employee'; if(id){ let emp=employeesData.find(e=>e.id===id); if(emp){ document.getElementById("empId").value=emp.id; document.getElementById("empName").value=emp.name; document.getElementById("empDesignation").value=emp.designation; document.getElementById("empDepartment").value=emp.department; document.getElementById("empTeam").value=emp.team; document.getElementById("empSupervisor").value=emp.supervisor; document.getElementById("empTenure").value=emp.tenure; document.getElementById("empProfile").value=emp.profile; document.getElementById("empShift").value=emp.shift; document.getElementById("empCity").value=emp.city; document.getElementById("empAvatar").value=emp.avatar; } } else { document.getElementById("empId").value=genId(); ["empName","empDesignation","empDepartment","empTeam","empSupervisor","empTenure","empShift","empCity","empAvatar"].forEach(i=>{let el=document.getElementById(i); if(el) el.value="";}); document.getElementById("empProfile").value=50; document.getElementById("empAvatar").value="https://randomuser.me/api/portraits/lego/1.jpg"; } employeeModal.show(); }
-  function saveEmployee() { let id=document.getElementById("empId").value, name=document.getElementById("empName").value.trim(); if(!name){ alert("Employee name required"); return; } let profile=parseInt(document.getElementById("empProfile").value); if(isNaN(profile)||profile<0||profile>100){ alert("Profile must be 0-100"); return; } let newEmp={ id, name, profile, role:isEditMode?employeesData.find(e=>e.id===id)?.role||"viewer":"viewer", designation:document.getElementById("empDesignation").value.trim()||"Staff", department:document.getElementById("empDepartment").value.trim()||"General", team:document.getElementById("empTeam").value.trim()||"Core", supervisor:document.getElementById("empSupervisor").value.trim()||"Admin", tenure:document.getElementById("empTenure").value.trim()||"0 Yr", shift:document.getElementById("empShift").value.trim()||"Morning", city:document.getElementById("empCity").value.trim()||"Unknown", salary:65000, avatar:document.getElementById("empAvatar").value.trim()||"https://randomuser.me/api/portraits/lego/1.jpg" }; if(isEditMode){ let idx=employeesData.findIndex(e=>e.id===id); if(idx!==-1) employeesData[idx]=newEmp; addLog("UPDATE",`${name} updated`); } else { if(employeesData.some(e=>e.id===id)){ alert("Duplicate ID"); return; } employeesData.push(newEmp); addLog("CREATE",`${name} added`); } renderTables(); employeeModal.hide(); showToast(`${isEditMode?'Updated':'Added'} ${name}`); }
-  function deleteEmployee(id){ let emp=employeesData.find(e=>e.id===id); if(confirm(`Delete ${emp?.name} permanently?`)){ employeesData=employeesData.filter(e=>e.id!==id); addLog("DELETE",`${emp?.name} removed`); renderTables(); showToast(`Deleted ${emp?.name}`); } }
-  
-  // Permissions & Filters
-  function assignRole(){ let empId=document.getElementById("assignRoleEmpId").value.trim(), newRole=document.getElementById("assignRoleSelect").value, emp=employeesData.find(e=>e.id===empId); if(!emp){ alert("Employee ID not found"); return; } emp.role=newRole; addLog("PERMISSION",`${emp.name} → ${newRole}`); renderTables(); showToast(`${emp.name} role updated to ${newRole}`); document.getElementById("assignRoleEmpId").value=""; if(permissionsModal) permissionsModal.hide(); }
-  function openPermissionsModal(){ renderPermissionsList(); permissionsModal.show(); }
-  function renderPermissionsList(){ document.getElementById("permissionsList").innerHTML = employeesData.map(e=>`<div class="flex justify-between items-center border-b py-2"><span><strong>${e.name}</strong> <span class="text-muted text-sm">(${e.id})</span></span><div>${getRoleBadge(e.role)} <button class="btn btn-sm btn-outline-secondary ms-2" onclick="app.assignRoleToId('${e.id}','editor')">Editor</button> <button class="btn btn-sm btn-outline-primary" onclick="app.assignRoleToId('${e.id}','admin')">Admin</button></div></div>`).join(''); }
-  function assignRoleToId(empId,role){ let emp=employeesData.find(e=>e.id===empId); if(emp){ emp.role=role; addLog("PERMISSION",`${emp.name} → ${role}`); renderTables(); renderPermissionsList(); showToast(`${emp.name} now ${role}`); } }
-  function applyFilters(){ currentFilters={ jobTitle:document.getElementById("filterJobTitle").value.trim(), department:document.getElementById("filterDepartment").value.trim(), team:document.getElementById("filterTeam").value.trim(), city:document.getElementById("filterCity").value.trim() }; renderTables(); closeFilterSidebar(); showToast("Filters applied"); }
-  function resetFilters(){ ["filterJobTitle","filterDepartment","filterTeam","filterCity"].forEach(id=>document.getElementById(id).value=""); currentFilters={ jobTitle:"", department:"", team:"", city:"" }; renderTables(); showToast("Filters reset"); }
-  function exportCSV(){ let filtered=getFiltered(); let headers=["ID","Name","Designation","Department","Team","Supervisor","Tenure","Profile%","Shift","City","Role"]; let rows=filtered.map(e=>[e.id,e.name,e.designation,e.department,e.team,e.supervisor,e.tenure,e.profile,e.shift,e.city,e.role]); let csv=[headers,...rows].map(r=>r.join(",")).join("\n"); let blob=new Blob([csv],{type:"text/csv"}); let a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="employees_export.csv"; a.click(); showToast("Export complete"); }
-  
-  // UI Functions
-  function openFilterSidebar(){ document.getElementById("filterSidebar").classList.remove("translate-x-full"); document.getElementById("filterSidebar").classList.add("translate-x-0"); }
-  function closeFilterSidebar(){ document.getElementById("filterSidebar").classList.remove("translate-x-0"); document.getElementById("filterSidebar").classList.add("translate-x-full"); }
-  function openPermissionsForUser(id){ openPermissionsModal(); setTimeout(()=>{ document.getElementById("assignRoleEmpId").value=id; },100); }
-  function showSection(section){ document.getElementById("dashboardSection").style.display=section==="dashboard"?"block":"none"; document.getElementById("usersSection").style.display=section==="users"?"block":"none"; renderTables(); if(window.innerWidth<=768){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("mobileOverlay").classList.remove("active"); } }
-  function toggleDropdown(menuId){ let menu=document.getElementById(menuId); if(!menu)return; let vis=menu.style.display==="block"; document.querySelectorAll(".submenu").forEach(s=>s.style.display="none"); if(!vis)menu.style.display="block"; }
-  function showHRReport(){ showToast(`HR Report: ${employeesData.length} employees | Avg Salary: $${Math.round(employeesData.reduce((a,b)=>a+(b.salary||0),0)/employeesData.length).toLocaleString()}`); }
-  function showRetentionChart(){ showToast("Retention Rate: 94% - Above industry average"); }
-  function showDepartmentStats(){ let ops=employeesData.filter(e=>e.department==="Operations").length; showToast(`Top Department: Operations (${ops} employees)`); }
-  function showSalaryInsights(){ let avg=Math.round(employeesData.reduce((a,b)=>a+(b.salary||0),0)/employeesData.length); showToast(`Salary Range: $58k - $90k | Average: $${avg.toLocaleString()}`); }
-  function showAuditLog(){ alert("📋 Audit Log (last 8 actions):\n"+auditLog.slice(0,8).map(l=>`${l.timestamp} - ${l.action}: ${l.details}`).join("\n")||"No actions recorded"); }
-  function showHelp(){ alert("NexusHR Help\n\n• Add/Edit/Delete employees using action icons\n• Use filters to refine employee list\n• Dark mode toggle in top-right corner\n• Permission roles: Admin, Editor, Viewer\n• Export data to CSV format\n• Audit log tracks all changes\n\nFor support: support@nexushr.com"); }
-  function alertFeature(msg){ showToast(`✨ ${msg} feature coming soon`); }
-  function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("open"); document.getElementById("mobileOverlay").classList.toggle("active"); }
-  function closeSidebar(){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("mobileOverlay").classList.remove("active"); }
-  function initDarkMode(){ if(localStorage.getItem("theme")==="dark"){ document.body.classList.add("dark"); document.querySelector("#themeToggle i").className="fas fa-sun"; } }
-  function toggleDarkMode(){ document.body.classList.toggle("dark"); let isDark=document.body.classList.contains("dark"); localStorage.setItem("theme",isDark?"dark":"light"); let icon=document.querySelector("#themeToggle i"); icon.className=isDark?"fas fa-sun":"fas fa-moon"; showToast(isDark?"Dark mode enabled":"Light mode enabled"); }
-  
-  // Window App Object
-  window.app = { showSection, toggleDropdown, openFilterSidebar, closeFilterSidebar, openEmployeeModal:()=>openModal(), editEmployee:(id)=>openModal(id), deleteEmployee, exportToCSV, openPermissionsModal, openPermissionsForUser, assignRole, assignRoleToId, showAuditLog, showHelp, showHRReport, showRetentionChart, showDepartmentStats, showSalaryInsights, alertFeature };
-  
-  // Event Listeners
-  document.getElementById("mobileMenuBtn")?.addEventListener("click",toggleSidebar);
-  document.getElementById("themeToggle")?.addEventListener("click",toggleDarkMode);
-  document.getElementById("applyFilterBtn").addEventListener("click",applyFilters);
-  document.getElementById("resetFilterBtn").addEventListener("click",()=>{ resetFilters(); closeFilterSidebar(); });
-  document.getElementById("saveEmployeeBtn").addEventListener("click",saveEmployee);
-  
-  // Initialize Modals
-  employeeModal = new bootstrap.Modal(document.getElementById("employeeModal"));
-  permissionsModal = new bootstrap.Modal(document.getElementById("permissionsModal"));
-  
-  // Initialize App
-  initDarkMode(); renderTables(); showSection("dashboard");
-})();
-</script>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border stat-card"><i class="fas fa-medal text-3xl text-yellow-500"></i><h3 class="text-2xl font-bold mt-2">${employeesData.filter(e => e.profile >= 80).length}</h3><p class="text-gray-500 text-sm">High Performers</p><span class="text-xs text-green-600"><i class="fas fa-star"></i> Top Talent</span></div>`;
+
+        let low = employeesData.filter(e => e.profile < 40).length, mid = employeesData.filter(e => e.profile >= 40 && e.profile < 70).length, high = employeesData.filter(e => e.profile >= 70).length, tot = employeesData.length;
+        document.getElementById("profileDistChart").innerHTML = `<div class="mb-2"><i class="fas fa-chart-line text-red-500 mr-2"></i>Low (&lt;40%): ${low} (${Math.round(low / tot * 100)}%)<div class="progress mt-1 h-1"><div class="progress-bar bg-red-500" style="width:${low / tot * 100}%"></div></div></div><div class="mb-2"><i class="fas fa-chart-line text-yellow-500 mr-2"></i>Medium (40-69%): ${mid} (${Math.round(mid / tot * 100)}%)<div class="progress mt-1 h-1"><div class="progress-bar bg-yellow-500" style="width:${mid / tot * 100}%"></div></div></div><div><i class="fas fa-chart-line text-green-500 mr-2"></i>High (≥70%): ${high} (${Math.round(high / tot * 100)}%)<div class="progress mt-1 h-1"><div class="progress-bar bg-green-500" style="width:${high / tot * 100}%"></div></div></div>`;
+
+        let deptMap = new Map(); employeesData.forEach(e => deptMap.set(e.department, (deptMap.get(e.department) || 0) + 1));
+        document.getElementById("deptChart").innerHTML = Array.from(deptMap.entries()).map(([dept, count]) => `<div class="flex justify-between mb-1"><span><i class="fas fa-building mr-2"></i>${dept}</span><span class="badge bg-secondary rounded-pill">${count}</span></div><div class="progress mb-2 h-1"><div class="progress-bar bg-info" style="width:${count / tot * 100}%"></div></div>`).join('');
+      }
+
+      function renderTables() {
+        let filtered = getFiltered(); renderCardsAndStats();
+        document.getElementById("dashboardTableBody").innerHTML = filtered.map(e => `<tr><td class="fw-semibold">${e.id}</td><td><img src="${e.avatar}" class="avatar" onerror="this.src='https://randomuser.me/api/portraits/lego/1.jpg'"> ${e.name}</td><td>${e.designation}</td><td><span class="badge bg-light border px-3 py-1">${e.department}</span></td><td>${e.team}</td><td>${e.supervisor}</td><td><i class="far fa-calendar-alt mr-1"></i>${e.tenure}</td><td style="min-width:100px">${renderProfile(e.profile)}</td></tr>`).join("");
+        document.getElementById("usersTableBody").innerHTML = filtered.map(e => `<tr><td class="fw-semibold">${e.id}</td><td><img src="${e.avatar}" class="avatar"> ${e.name}</td><td>${e.designation}</td><td>${e.department}</td><td>${e.team}</td><td>${e.supervisor}</td><td>${e.tenure}</td><td>${renderProfile(e.profile)}</td><td>${getRoleBadge(e.role)}</td><td class="action-icons"><i class="fas fa-edit text-primary" onclick="app.editEmployee('${e.id}')" title="Edit"></i> <i class="fas fa-trash-alt text-danger" onclick="app.deleteEmployee('${e.id}')" title="Delete"></i> <i class="fas fa-shield-alt" onclick="app.openPermissionsForUser('${e.id}')" title="Permissions"></i></td></tr>`).join("");
+      }
+
+      // CRUD Operations
+      function genId() { let max = 0; employeesData.forEach(e => { let n = parseInt(e.id); if (!isNaN(n) && n > max) max = n; }); return String(max + 1).padStart(4, '0'); }
+      function openModal(id = null) { isEditMode = !!id; document.getElementById("modalTitle").innerHTML = isEditMode ? '<i class="fas fa-pen mr-2"></i>Edit Employee' : '<i class="fas fa-user-plus mr-2"></i>Add Employee'; if (id) { let emp = employeesData.find(e => e.id === id); if (emp) { document.getElementById("empId").value = emp.id; document.getElementById("empName").value = emp.name; document.getElementById("empDesignation").value = emp.designation; document.getElementById("empDepartment").value = emp.department; document.getElementById("empTeam").value = emp.team; document.getElementById("empSupervisor").value = emp.supervisor; document.getElementById("empTenure").value = emp.tenure; document.getElementById("empProfile").value = emp.profile; document.getElementById("empShift").value = emp.shift; document.getElementById("empCity").value = emp.city; document.getElementById("empAvatar").value = emp.avatar; } } else { document.getElementById("empId").value = genId();["empName", "empDesignation", "empDepartment", "empTeam", "empSupervisor", "empTenure", "empShift", "empCity", "empAvatar"].forEach(i => { let el = document.getElementById(i); if (el) el.value = ""; }); document.getElementById("empProfile").value = 50; document.getElementById("empAvatar").value = "https://randomuser.me/api/portraits/lego/1.jpg"; } employeeModal.show(); }
+      function saveEmployee() { let id = document.getElementById("empId").value, name = document.getElementById("empName").value.trim(); if (!name) { alert("Employee name required"); return; } let profile = parseInt(document.getElementById("empProfile").value); if (isNaN(profile) || profile < 0 || profile > 100) { alert("Profile must be 0-100"); return; } let newEmp = { id, name, profile, role: isEditMode ? employeesData.find(e => e.id === id)?.role || "viewer" : "viewer", designation: document.getElementById("empDesignation").value.trim() || "Staff", department: document.getElementById("empDepartment").value.trim() || "General", team: document.getElementById("empTeam").value.trim() || "Core", supervisor: document.getElementById("empSupervisor").value.trim() || "Admin", tenure: document.getElementById("empTenure").value.trim() || "0 Yr", shift: document.getElementById("empShift").value.trim() || "Morning", city: document.getElementById("empCity").value.trim() || "Unknown", salary: 65000, avatar: document.getElementById("empAvatar").value.trim() || "https://randomuser.me/api/portraits/lego/1.jpg" }; if (isEditMode) { let idx = employeesData.findIndex(e => e.id === id); if (idx !== -1) employeesData[idx] = newEmp; addLog("UPDATE", `${name} updated`); } else { if (employeesData.some(e => e.id === id)) { alert("Duplicate ID"); return; } employeesData.push(newEmp); addLog("CREATE", `${name} added`); } renderTables(); employeeModal.hide(); showToast(`${isEditMode ? 'Updated' : 'Added'} ${name}`); }
+      function deleteEmployee(id) { let emp = employeesData.find(e => e.id === id); if (confirm(`Delete ${emp?.name} permanently?`)) { employeesData = employeesData.filter(e => e.id !== id); addLog("DELETE", `${emp?.name} removed`); renderTables(); showToast(`Deleted ${emp?.name}`); } }
+
+      // Permissions & Filters
+      function assignRole() { let empId = document.getElementById("assignRoleEmpId").value.trim(), newRole = document.getElementById("assignRoleSelect").value, emp = employeesData.find(e => e.id === empId); if (!emp) { alert("Employee ID not found"); return; } emp.role = newRole; addLog("PERMISSION", `${emp.name} → ${newRole}`); renderTables(); showToast(`${emp.name} role updated to ${newRole}`); document.getElementById("assignRoleEmpId").value = ""; if (permissionsModal) permissionsModal.hide(); }
+      function openPermissionsModal() { renderPermissionsList(); permissionsModal.show(); }
+      function renderPermissionsList() { document.getElementById("permissionsList").innerHTML = employeesData.map(e => `<div class="flex justify-between items-center border-b py-2"><span><strong>${e.name}</strong> <span class="text-muted text-sm">(${e.id})</span></span><div>${getRoleBadge(e.role)} <button class="btn btn-sm btn-outline-secondary ms-2" onclick="app.assignRoleToId('${e.id}','editor')">Editor</button> <button class="btn btn-sm btn-outline-primary" onclick="app.assignRoleToId('${e.id}','admin')">Admin</button></div></div>`).join(''); }
+      function assignRoleToId(empId, role) { let emp = employeesData.find(e => e.id === empId); if (emp) { emp.role = role; addLog("PERMISSION", `${emp.name} → ${role}`); renderTables(); renderPermissionsList(); showToast(`${emp.name} now ${role}`); } }
+      function applyFilters() { currentFilters = { jobTitle: document.getElementById("filterJobTitle").value.trim(), department: document.getElementById("filterDepartment").value.trim(), team: document.getElementById("filterTeam").value.trim(), city: document.getElementById("filterCity").value.trim() }; renderTables(); closeFilterSidebar(); showToast("Filters applied"); }
+      function resetFilters() { ["filterJobTitle", "filterDepartment", "filterTeam", "filterCity"].forEach(id => document.getElementById(id).value = ""); currentFilters = { jobTitle: "", department: "", team: "", city: "" }; renderTables(); showToast("Filters reset"); }
+      function exportCSV() { let filtered = getFiltered(); let headers = ["ID", "Name", "Designation", "Department", "Team", "Supervisor", "Tenure", "Profile%", "Shift", "City", "Role"]; let rows = filtered.map(e => [e.id, e.name, e.designation, e.department, e.team, e.supervisor, e.tenure, e.profile, e.shift, e.city, e.role]); let csv = [headers, ...rows].map(r => r.join(",")).join("\n"); let blob = new Blob([csv], { type: "text/csv" }); let a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "employees_export.csv"; a.click(); showToast("Export complete"); }
+
+      // UI Functions
+      function openFilterSidebar() { document.getElementById("filterSidebar").classList.remove("translate-x-full"); document.getElementById("filterSidebar").classList.add("translate-x-0"); }
+      function closeFilterSidebar() { document.getElementById("filterSidebar").classList.remove("translate-x-0"); document.getElementById("filterSidebar").classList.add("translate-x-full"); }
+      function openPermissionsForUser(id) { openPermissionsModal(); setTimeout(() => { document.getElementById("assignRoleEmpId").value = id; }, 100); }
+      function showSection(section) { document.getElementById("dashboardSection").style.display = section === "dashboard" ? "block" : "none"; document.getElementById("usersSection").style.display = section === "users" ? "block" : "none"; renderTables(); if (window.innerWidth <= 768) { document.getElementById("sidebar").classList.remove("open"); document.getElementById("mobileOverlay").classList.remove("active"); } }
+      function toggleDropdown(menuId) { let menu = document.getElementById(menuId); if (!menu) return; let vis = menu.style.display === "block"; document.querySelectorAll(".submenu").forEach(s => s.style.display = "none"); if (!vis) menu.style.display = "block"; }
+      function showHRReport() { showToast(`HR Report: ${employeesData.length} employees | Avg Salary: $${Math.round(employeesData.reduce((a, b) => a + (b.salary || 0), 0) / employeesData.length).toLocaleString()}`); }
+      function showRetentionChart() { showToast("Retention Rate: 94% - Above industry average"); }
+      function showDepartmentStats() { let ops = employeesData.filter(e => e.department === "Operations").length; showToast(`Top Department: Operations (${ops} employees)`); }
+      function showSalaryInsights() { let avg = Math.round(employeesData.reduce((a, b) => a + (b.salary || 0), 0) / employeesData.length); showToast(`Salary Range: $58k - $90k | Average: $${avg.toLocaleString()}`); }
+      function showAuditLog() { alert("📋 Audit Log (last 8 actions):\n" + auditLog.slice(0, 8).map(l => `${l.timestamp} - ${l.action}: ${l.details}`).join("\n") || "No actions recorded"); }
+      function showHelp() { alert("NexusHR Help\n\n• Add/Edit/Delete employees using action icons\n• Use filters to refine employee list\n• Dark mode toggle in top-right corner\n• Permission roles: Admin, Editor, Viewer\n• Export data to CSV format\n• Audit log tracks all changes\n\nFor support: support@nexushr.com"); }
+      function alertFeature(msg) { showToast(`✨ ${msg} feature coming soon`); }
+      function toggleSidebar() { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("mobileOverlay").classList.toggle("active"); }
+      function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("mobileOverlay").classList.remove("active"); }
+      function initDarkMode() { if (localStorage.getItem("theme") === "dark") { document.body.classList.add("dark"); document.querySelector("#themeToggle i").className = "fas fa-sun"; } }
+      function toggleDarkMode() { document.body.classList.toggle("dark"); let isDark = document.body.classList.contains("dark"); localStorage.setItem("theme", isDark ? "dark" : "light"); let icon = document.querySelector("#themeToggle i"); icon.className = isDark ? "fas fa-sun" : "fas fa-moon"; showToast(isDark ? "Dark mode enabled" : "Light mode enabled"); }
+
+      // Window App Object
+      window.app = { showSection, toggleDropdown, openFilterSidebar, closeFilterSidebar, openEmployeeModal: () => openModal(), editEmployee: (id) => openModal(id), deleteEmployee, exportToCSV, openPermissionsModal, openPermissionsForUser, assignRole, assignRoleToId, showAuditLog, showHelp, showHRReport, showRetentionChart, showDepartmentStats, showSalaryInsights, alertFeature };
+
+      // Event Listeners
+      document.getElementById("mobileMenuBtn")?.addEventListener("click", toggleSidebar);
+      document.getElementById("themeToggle")?.addEventListener("click", toggleDarkMode);
+      document.getElementById("applyFilterBtn").addEventListener("click", applyFilters);
+      document.getElementById("resetFilterBtn").addEventListener("click", () => { resetFilters(); closeFilterSidebar(); });
+      document.getElementById("saveEmployeeBtn").addEventListener("click", saveEmployee);
+
+      // Initialize Modals
+      employeeModal = new bootstrap.Modal(document.getElementById("employeeModal"));
+      permissionsModal = new bootstrap.Modal(document.getElementById("permissionsModal"));
+
+      // Initialize App
+      initDarkMode(); renderTables(); showSection("dashboard");
+    })();
+  </script>
 </body>
+
 </html>
