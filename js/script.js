@@ -1,4 +1,4 @@
-<script>
+
     (function () {
       // Employee Data
       let employeesData = [
@@ -98,4 +98,4 @@
       // Initialize App
       initDarkMode(); renderTables(); showSection("dashboard");
     })();
-  </script>
+  
