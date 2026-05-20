@@ -1,4 +1,4 @@
-  <script>
+  
     // ============ DATA ============
     let employees = [
       { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Super A", supervisor: "Kaylo Margo", tenure: "1 Yr", profile: 95, shift: "Morning", city: "NYC", avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
@@ -331,4 +331,4 @@
     window.exportToCSV = exportToCSV;
     window.openPermissionsModal = openPermissionsModal;
     window.showAuditLog = showAuditLog;
-  </script>
+  
