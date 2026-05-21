@@ -1,4 +1,4 @@
-<script>
+
     // ============================================
     // DATA
     // ============================================
@@ -360,4 +360,4 @@
     window.exportToCSV = exportToCSV;
     window.openPermissionsModal = openPermissionsModal;
     window.showAuditLog = showAuditLog;
-  </script>
+  
