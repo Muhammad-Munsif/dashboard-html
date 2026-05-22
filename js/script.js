@@ -1,4 +1,4 @@
-<script>
+
 
     // ============================================
     // DATA
@@ -362,4 +362,4 @@
     window.openPermissionsModal = openPermissionsModal;
     window.showAuditLog = showAuditLog;
 
-  </script>
+  
