@@ -9,17 +9,9 @@
       font-family: 'Inter', sans-serif;
       background: #f0f2f8;
       transition: all 0.3s ease;<style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
     }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f0f2f8;
-      transition: all 0.3s ease;
-    }
+    
 
     /* Dark Mode */
     body.dark-mode {
