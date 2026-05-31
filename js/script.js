@@ -1,4 +1,3 @@
-
 // ==================== DATA ====================
 let employees = [
   { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "2 Yrs", profile: 95, shift: "Morning", city: "New York", avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
@@ -71,7 +70,7 @@ function updateCharts() {
   let low = employees.filter(e => e.profile < 40).length;
   let mid = employees.filter(e => e.profile >= 40 && e.profile < 70).length;
   let high = employees.filter(e => e.profile >= 70).length;
-  
+
   let deptMap = new Map();
   employees.forEach(e => deptMap.set(e.department, (deptMap.get(e.department) || 0) + 1));
   let deptLabels = Array.from(deptMap.keys());
@@ -370,7 +369,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("saveEmpBtn").addEventListener("click", saveEmployee);
   document.getElementById("assignRoleBtn").addEventListener("click", assignRoleFromInput);
   document.getElementById("clearTableFiltersBtn").addEventListener("click", clearTableFilters);
-  
+
   document.getElementById("tableSearchName").addEventListener("input", updateTableFilters);
   document.getElementById("tableSearchDesignation").addEventListener("input", updateTableFilters);
   document.getElementById("tableSearchDept").addEventListener("input", updateTableFilters);
