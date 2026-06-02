@@ -1,4 +1,4 @@
-<script>
+
         // ==================== DATA ====================
         let employees = [
             { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "2 Yrs", profile: 95, shift: "Morning", city: "New York", avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
@@ -101,4 +101,4 @@
             initTheme(); renderTables(); showSection("dashboard");
             document.getElementById("lastUpdated").innerHTML = new Date().toLocaleTimeString();
         });
-    </script>
+    
