@@ -1,485 +1,849 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-  <title>NexusHR Pro · Employee Management System</title>
-  <!-- Bootstrap 5 + Font Awesome + Chart.js -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f0f2f8;
-      transition: all 0.3s ease;
-      overflow-x: hidden;
-    }
-    /* Dark Mode */
-    body.dark-mode { background: #0f172a; }
-    body.dark-mode .card, body.dark-mode .modal-content, body.dark-mode .filter-panel,
-    body.dark-mode .table-container, body.dark-mode footer, body.dark-mode .top-bar,
-    body.dark-mode .stat-card, body.dark-mode .table-filters, body.dark-mode .welcome-card {
-      background: #1e293b !important;
-      color: #e2e8f0 !important;
-    }
-    body.dark-mode .text-muted, body.dark-mode .text-secondary { color: #94a3b8 !important; }
-    body.dark-mode .table, body.dark-mode .table td, body.dark-mode .table th {
-      background: #1e293b; color: #e2e8f0; border-color: #334155;
-    }
-    body.dark-mode .form-control, body.dark-mode .form-select {
-      background: #334155; color: #f1f5f9; border-color: #475569;
-    }
-    body.dark-mode .btn-sm-custom { background: #334155; color: #e2e8f0; border-color: #475569; }
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: linear-gradient(180deg, #1e3c72, #0f2c3d);
-      color: white;
-      position: fixed;
-      left: 0;
-      top: 0;
-      height: 100vh;
-      transition: all 0.3s ease;
-      z-index: 1000;
-      overflow-y: auto;
-    }
-    .sidebar.collapsed { width: 70px; }
-    .sidebar.collapsed .sidebar-text, .sidebar.collapsed .arrow { display: none; }
-    .sidebar .nav-link {
-      color: white;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: 0.2s;
-      border-radius: 12px;
-      margin: 4px 10px;
-    }
-    .sidebar .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
-    .sidebar .nav-link i { width: 24px; font-size: 1.1rem; }
-    .submenu { list-style: none; padding-left: 50px; display: none; }
-    .submenu li { padding: 8px 12px; cursor: pointer; color: white; border-radius: 8px; margin: 2px 0; }
-    .submenu li:hover { background: rgba(255, 255, 255, 0.1); }
-    /* Top Bar */
-    .top-bar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: 260px;
-      background: white;
-      padding: 12px 25px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      z-index: 999;
-      transition: all 0.3s;
-    }
-    .main-content {
-      margin-left: 260px;
-      padding: 80px 25px 25px;
-      transition: all 0.3s;
-      min-height: 100vh;
-    }
-    /* Responsive */
-    @media (max-width: 992px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.active { transform: translateX(0); }
-      .top-bar { left: 0; }
-      .main-content { margin-left: 0; }
-    }
-    @media (min-width: 993px) {
-      .sidebar.collapsed { transform: translateX(0); width: 70px; }
-      .sidebar.collapsed + .top-bar { left: 70px; }
-      .sidebar.collapsed ~ .main-content { margin-left: 70px; }
-    }
-    /* Welcome Card */
-    .welcome-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border-radius: 20px;
-      padding: 25px;
-      margin-bottom: 25px;
-    }
-    body.dark-mode .welcome-card { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; }
-    /* Stats Cards */
-    .stat-card {
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      transition: transform 0.2s, box-shadow 0.2s;
-      height: 100%;
-      cursor: pointer;
-    }
-    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    /* Filter Panel */
-    .filter-panel {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 360px;
-      max-width: 85vw;
-      height: 100%;
-      background: white;
-      padding: 25px;
-      transition: right 0.3s ease;
-      z-index: 1100;
-      box-shadow: -2px 0 15px rgba(0,0,0,0.1);
-      overflow-y: auto;
-    }
-    .filter-panel.active { right: 0; }
-    /* Table Filters */
-    .table-filters {
-      background: #f8fafc;
-      padding: 15px;
-      border-radius: 16px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: flex-end;
-    }
-    .filter-input-group { flex: 1; min-width: 130px; }
-    .filter-input-group label { font-size: 0.7rem; font-weight: 600; margin-bottom: 4px; display: block; color: #64748b; }
-    /* Table */
-    .table-container {
-      background: white;
-      border-radius: 16px;
-      overflow-x: auto;
-    }
-    .table { margin: 0; font-size: 0.85rem; min-width: 600px; }
-    .table th { background: #f8f9fa; padding: 12px; white-space: nowrap; font-weight: 600; }
-    .avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      object-fit: cover; margin-right: 8px;
-      border: 2px solid white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .profile-bar { width: 80px; height: 4px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
-    .profile-fill { height: 100%; background: #28a745; }
-    .low .profile-fill { background: #dc3545; }
-    .medium .profile-fill { background: #ffc107; }
-    .action-icons i {
-      margin: 0 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 6px;
-      border-radius: 8px;
-      transition: all 0.2s;
-    }
-    .action-icons .fa-edit:hover { background: #28a74520; color: #28a745; }
-    .action-icons .fa-trash-alt:hover { background: #dc354520; color: #dc3545; }
-    .action-icons .fa-shield-alt:hover { background: #17a2b820; color: #17a2b8; }
-    .role-badge {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: #eef2ff;
-    }
-    /* Toast */
-    .toast-msg {
-      position: fixed; bottom: 20px; right: 20px;
-      background: white; padding: 12px 24px;
-      border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-      border-left: 4px solid #28a745; z-index: 1200;
-      animation: slideIn 0.3s ease;
-    }
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    footer {
-      text-align: center; padding: 20px; margin-top: 30px;
-      font-size: 0.8rem; background: white; border-radius: 16px;
-    }
-    .btn-sm-custom {
-      background: white; border: 1px solid #ddd;
-      border-radius: 30px; padding: 6px 16px; font-size: 0.8rem;
-      transition: all 0.2s;
-    }
-    .btn-sm-custom:hover { background: #f0f0f0; transform: translateY(-2px); }
-    .chart-container { position: relative; height: 200px; width: 100%; }
-    /* Mobile */
-    @media (max-width: 576px) {
-      .main-content { padding: 75px 12px 12px; }
-      .stat-card { padding: 15px; }
-      .stat-card h2 { font-size: 1.5rem; }
-      .table-filters { flex-direction: column; }
-      .filter-input-group { width: 100%; }
-      .action-icons i { font-size: 0.9rem; padding: 4px; }
-      .chart-container { height: 180px; }
-      .welcome-card { padding: 15px; }
-    }
-    /* Sidebar Toggle */
-    .sidebar-toggle-mobile {
-      display: none;
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 1100;
-      background: #1e3c72;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 1.2rem;
-    }
-    @media (max-width: 992px) { .sidebar-toggle-mobile { display: flex; align-items: center; justify-content: center; } }
-    .sidebar-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5); z-index: 995; display: none;
-    }
-    .sidebar-overlay.active { display: block; }
-    /* Search Highlight */
-    .highlight { background-color: #ffeb3b; padding: 0 2px; border-radius: 3px; }
-    body.dark-mode .highlight { background-color: #f59e0b; color: #1e293b; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>NexusHR Pro · Employee Management System</title>
+    <!-- Bootstrap 5 + Font Awesome + Chart.js -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f8;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background: #0f172a;
+        }
+
+        body.dark-mode .card,
+        body.dark-mode .modal-content,
+        body.dark-mode .filter-panel,
+        body.dark-mode .table-container,
+        body.dark-mode footer,
+        body.dark-mode .top-bar,
+        body.dark-mode .stat-card,
+        body.dark-mode .table-filters,
+        body.dark-mode .welcome-card {
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+
+        body.dark-mode .text-muted,
+        body.dark-mode .text-secondary {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-mode .table,
+        body.dark-mode .table td,
+        body.dark-mode .table th {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+
+        body.dark-mode .form-control,
+        body.dark-mode .form-select {
+            background: #334155;
+            color: #f1f5f9;
+            border-color: #475569;
+        }
+
+        body.dark-mode .btn-sm-custom {
+            background: #334155;
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #1e3c72, #0f2c3d);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed .sidebar-text,
+        .sidebar.collapsed .arrow {
+            display: none;
+        }
+
+        .sidebar .nav-link {
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-radius: 12px;
+            margin: 4px 10px;
+        }
+
+        .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .nav-link i {
+            width: 24px;
+            font-size: 1.1rem;
+        }
+
+        .submenu {
+            list-style: none;
+            padding-left: 50px;
+            display: none;
+        }
+
+        .submenu li {
+            padding: 8px 12px;
+            cursor: pointer;
+            color: white;
+            border-radius: 8px;
+            margin: 2px 0;
+        }
+
+        .submenu li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Top Bar */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 260px;
+            background: white;
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 80px 25px 25px;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .top-bar {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (min-width: 993px) {
+            .sidebar.collapsed {
+                transform: translateX(0);
+                width: 70px;
+            }
+
+            .sidebar.collapsed+.top-bar {
+                left: 70px;
+            }
+
+            .sidebar.collapsed~.main-content {
+                margin-left: 70px;
+            }
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        body.dark-mode .welcome-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 360px;
+            max-width: 85vw;
+            height: 100%;
+            background: white;
+            padding: 25px;
+            transition: right 0.3s ease;
+            z-index: 1100;
+            box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .filter-panel.active {
+            right: 0;
+        }
+
+        /* Table Filters */
+        .table-filters {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .filter-input-group {
+            flex: 1;
+            min-width: 130px;
+        }
+
+        .filter-input-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+            color: #64748b;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+
+        .table {
+            margin: 0;
+            font-size: 0.85rem;
+            min-width: 600px;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 12px;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-bar {
+            width: 80px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .profile-fill {
+            height: 100%;
+            background: #28a745;
+        }
+
+        .low .profile-fill {
+            background: #dc3545;
+        }
+
+        .medium .profile-fill {
+            background: #ffc107;
+        }
+
+        .action-icons i {
+            margin: 0 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 6px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .action-icons .fa-edit:hover {
+            background: #28a74520;
+            color: #28a745;
+        }
+
+        .action-icons .fa-trash-alt:hover {
+            background: #dc354520;
+            color: #dc3545;
+        }
+
+        .action-icons .fa-shield-alt:hover {
+            background: #17a2b820;
+            color: #17a2b8;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #eef2ff;
+        }
+
+        /* Toast */
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #28a745;
+            z-index: 1200;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.8rem;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .btn-sm-custom {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-sm-custom:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        /* Mobile */
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 75px 12px 12px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-card h2 {
+                font-size: 1.5rem;
+            }
+
+            .table-filters {
+                flex-direction: column;
+            }
+
+            .filter-input-group {
+                width: 100%;
+            }
+
+            .action-icons i {
+                font-size: 0.9rem;
+                padding: 4px;
+            }
+
+            .chart-container {
+                height: 180px;
+            }
+
+            .welcome-card {
+                padding: 15px;
+            }
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle-mobile {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1100;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-toggle-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 995;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Search Highlight */
+        .highlight {
+            background-color: #ffeb3b;
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        body.dark-mode .highlight {
+            background-color: #f59e0b;
+            color: #1e293b;
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- Mobile Sidebar Toggle -->
-<button class="sidebar-toggle-mobile" id="mobileSidebarToggle"><i class="fas fa-bars"></i></button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle-mobile" id="mobileSidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-  <div class="p-3 border-bottom" style="border-color: rgba(255,255,255,0.2);">
-    <h5><i class="fas fa-chart-line text-success me-2"></i><span class="sidebar-text">NexusHR</span></h5>
-  </div>
-  <div class="mt-2">
-    <div class="nav-link" onclick="showSection('dashboard')"><i class="fas fa-tachometer-alt"></i> <span class="sidebar-text">Dashboard</span></div>
-    <div>
-      <div class="nav-link" onclick="toggleSubmenu('usersSubmenu')"><i class="fas fa-users"></i> <span class="sidebar-text">Workforce</span><span class="arrow ms-auto">▼</span></div>
-      <ul class="submenu" id="usersSubmenu">
-        <li onclick="showSection('users')"><i class="fas fa-list me-2"></i>All Employees</li>
-        <li onclick="openPermissionsModal()"><i class="fas fa-shield-alt me-2"></i>Permissions</li>
-      </ul>
-    </div>
-    <div class="nav-link" onclick="showAuditLog()"><i class="fas fa-history"></i> <span class="sidebar-text">Audit Log</span></div>
-    <div class="nav-link" onclick="showHelp()"><i class="fas fa-question-circle"></i> <span class="sidebar-text">Help</span></div>
-  </div>
-</div>
-
-<!-- Top Bar -->
-<div class="top-bar">
-  <div class="d-flex align-items-center gap-3">
-    <div class="fw-semibold">Welcome back, Admin</div>
-  </div>
-  <div class="d-flex gap-2">
-    <button class="btn btn-sm" id="desktopSidebarToggle" style="background: none; display: none;"><i class="fas fa-bars fa-lg"></i></button>
-    <button class="btn btn-sm me-2" id="darkModeBtn"><i class="fas fa-moon"></i></button>
-    <button class="btn btn-sm btn-success" onclick="openEmployeeModal()"><i class="fas fa-plus me-1"></i>Add Employee</button>
-  </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-content" id="mainContent">
-  <!-- Dashboard Section -->
-  <div id="dashboardSection">
-    <!-- Welcome Banner -->
-    <div class="welcome-card">
-      <div class="d-flex justify-content-between align-items-center flex-wrap">
-        <div>
-          <h3 class="fw-bold mb-1"><i class="fas fa-chart-line me-2"></i>HR Dashboard</h3>
-          <p class="mb-0 opacity-75">Real-time workforce analytics and insights</p>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="p-3 border-bottom" style="border-color: rgba(255,255,255,0.2);">
+            <h5><i class="fas fa-chart-line text-success me-2"></i><span class="sidebar-text">NexusHR</span></h5>
         </div>
-        <div class="mt-2 mt-sm-0">
-          <span class="badge bg-white text-dark px-3 py-2 rounded-pill">
-            <i class="fas fa-calendar-alt me-1"></i> Last updated: <span id="lastUpdated">Today</span>
-          </span>
+        <div class="mt-2">
+            <div class="nav-link" onclick="showSection('dashboard')"><i class="fas fa-tachometer-alt"></i> <span
+                    class="sidebar-text">Dashboard</span></div>
+            <div>
+                <div class="nav-link" onclick="toggleSubmenu('usersSubmenu')"><i class="fas fa-users"></i> <span
+                        class="sidebar-text">Workforce</span><span class="arrow ms-auto">▼</span></div>
+                <ul class="submenu" id="usersSubmenu">
+                    <li onclick="showSection('users')"><i class="fas fa-list me-2"></i>All Employees</li>
+                    <li onclick="openPermissionsModal()"><i class="fas fa-shield-alt me-2"></i>Permissions</li>
+                </ul>
+            </div>
+            <div class="nav-link" onclick="showAuditLog()"><i class="fas fa-history"></i> <span
+                    class="sidebar-text">Audit Log</span></div>
+            <div class="nav-link" onclick="showHelp()"><i class="fas fa-question-circle"></i> <span
+                    class="sidebar-text">Help</span></div>
         </div>
-      </div>
     </div>
 
-    <div class="row g-3 mb-4" id="statsCards"></div>
-    <div class="row g-3 mb-4">
-      <div class="col-md-6"><div class="stat-card"><h6><i class="fas fa-chart-pie text-success me-2"></i>Profile Completion</h6><div class="chart-container"><canvas id="profileChartCanvas"></canvas></div></div></div>
-      <div class="col-md-6"><div class="stat-card"><h6><i class="fas fa-building text-primary me-2"></i>Department Distribution</h6><div class="chart-container"><canvas id="deptChartCanvas"></canvas></div></div></div>
-    </div>
-
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-      <h5 class="fw-bold mb-0"><i class="fas fa-users me-2"></i>Active Workforce</h5>
-      <div class="d-flex gap-2">
-        <div class="input-group input-group-sm" style="width: 250px;">
-          <span class="input-group-text"><i class="fas fa-search"></i></span>
-          <input type="text" id="dashboardSearch" class="form-control" placeholder="Quick search...">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="d-flex align-items-center gap-3">
+            <div class="fw-semibold">Welcome back, Admin</div>
         </div>
-        <button class="btn-sm-custom" onclick="openFilterSidebar()"><i class="fas fa-filter me-1"></i>Filter</button>
-        <button class="btn-sm-custom" onclick="exportToCSV()"><i class="fas fa-download me-1"></i>Export</button>
-      </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm" id="desktopSidebarToggle" style="background: none; display: none;"><i
+                    class="fas fa-bars fa-lg"></i></button>
+            <button class="btn btn-sm me-2" id="darkModeBtn"><i class="fas fa-moon"></i></button>
+            <button class="btn btn-sm btn-success" onclick="openEmployeeModal()"><i class="fas fa-plus me-1"></i>Add
+                Employee</button>
+        </div>
     </div>
 
-    <div class="stat-card p-0 overflow-hidden">
-      <div class="table-container"><table class="table"><thead><tr><th>ID</th><th>Employee</th><th>Role</th><th>Department</th><th>Team</th><th>Supervisor</th><th>Profile</th></tr></thead><tbody id="dashboardTable"></tbody></table></div>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Dashboard Section -->
+        <div id="dashboardSection">
+            <!-- Welcome Banner -->
+            <div class="welcome-card">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h3 class="fw-bold mb-1"><i class="fas fa-chart-line me-2"></i>HR Dashboard</h3>
+                        <p class="mb-0 opacity-75">Real-time workforce analytics and insights</p>
+                    </div>
+                    <div class="mt-2 mt-sm-0">
+                        <span class="badge bg-white text-dark px-3 py-2 rounded-pill">
+                            <i class="fas fa-calendar-alt me-1"></i> Last updated: <span id="lastUpdated">Today</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4" id="statsCards"></div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="stat-card">
+                        <h6><i class="fas fa-chart-pie text-success me-2"></i>Profile Completion</h6>
+                        <div class="chart-container"><canvas id="profileChartCanvas"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stat-card">
+                        <h6><i class="fas fa-building text-primary me-2"></i>Department Distribution</h6>
+                        <div class="chart-container"><canvas id="deptChartCanvas"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="fw-bold mb-0"><i class="fas fa-users me-2"></i>Active Workforce</h5>
+                <div class="d-flex gap-2">
+                    <div class="input-group input-group-sm" style="width: 250px;">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="dashboardSearch" class="form-control" placeholder="Quick search...">
+                    </div>
+                    <button class="btn-sm-custom" onclick="openFilterSidebar()"><i
+                            class="fas fa-filter me-1"></i>Filter</button>
+                    <button class="btn-sm-custom" onclick="exportToCSV()"><i
+                            class="fas fa-download me-1"></i>Export</button>
+                </div>
+            </div>
+
+            <div class="stat-card p-0 overflow-hidden">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Employee</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Team</th>
+                                <th>Supervisor</th>
+                                <th>Profile</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="usersSection" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-2">
+                <div>
+                    <h2><i class="fas fa-address-card me-2"></i>Employee Directory</h2>
+                    <p class="text-muted">Manage employees with full control</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn-sm-custom" onclick="openFilterSidebar()"><i
+                            class="fas fa-sliders-h me-1"></i>Advanced</button>
+                    <button class="btn-sm-custom" onclick="openEmployeeModal()"><i
+                            class="fas fa-plus me-1"></i>Add</button>
+                    <button class="btn-sm-custom" onclick="exportToCSV()"><i
+                            class="fas fa-download me-1"></i>Export</button>
+                </div>
+            </div>
+
+            <div class="table-filters">
+                <div class="filter-input-group"><label><i class="fas fa-search me-1"></i>Name</label><input type="text"
+                        id="tableSearchName" class="form-control form-control-sm" placeholder="Search name..."></div>
+                <div class="filter-input-group"><label><i class="fas fa-briefcase me-1"></i>Designation</label><input
+                        type="text" id="tableSearchDesignation" class="form-control form-control-sm"
+                        placeholder="Role..."></div>
+                <div class="filter-input-group"><label><i class="fas fa-building me-1"></i>Department</label><input
+                        type="text" id="tableSearchDept" class="form-control form-control-sm" placeholder="Dept...">
+                </div>
+                <div class="filter-input-group"><label><i class="fas fa-tag me-1"></i>Team</label><input type="text"
+                        id="tableSearchTeam" class="form-control form-control-sm" placeholder="Team..."></div>
+                <div class="filter-input-group"><label><i class="fas fa-chart-line me-1"></i>Min %</label><input
+                        type="number" id="tableSearchMinProfile" class="form-control form-control-sm"
+                        placeholder="Min %" min="0" max="100"></div>
+                <div><button class="btn btn-sm btn-outline-primary" id="clearTableFiltersBtn"><i
+                            class="fas fa-eraser me-1"></i>Clear</button></div>
+            </div>
+
+            <div class="stat-card p-0 overflow-hidden">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Designation</th>
+                                <th>Dept</th>
+                                <th>Team</th>
+                                <th>Profile</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer><i class="far fa-copyright me-1"></i>2026 NexusHR Pro — Employee Management System | <i
+                class="fas fa-chart-line me-1"></i>Version 2.0</footer>
     </div>
-  </div>
 
-  <!-- Users Section -->
-  <div id="usersSection" style="display: none;">
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-2">
-      <div><h2><i class="fas fa-address-card me-2"></i>Employee Directory</h2><p class="text-muted">Manage employees with full control</p></div>
-      <div class="d-flex gap-2 flex-wrap">
-        <button class="btn-sm-custom" onclick="openFilterSidebar()"><i class="fas fa-sliders-h me-1"></i>Advanced</button>
-        <button class="btn-sm-custom" onclick="openEmployeeModal()"><i class="fas fa-plus me-1"></i>Add</button>
-        <button class="btn-sm-custom" onclick="exportToCSV()"><i class="fas fa-download me-1"></i>Export</button>
-      </div>
+    <!-- Filter Panel -->
+    <div class="filter-panel" id="filterPanel">
+        <div class="d-flex justify-content-between mb-3">
+            <h5><i class="fas fa-sliders-h me-2"></i>Advanced Filters</h5><button class="btn-close"
+                onclick="closeFilterSidebar()"></button>
+        </div>
+        <input type="text" id="filterJob" class="form-control mb-2" placeholder="Job Title">
+        <input type="text" id="filterDept" class="form-control mb-2" placeholder="Department">
+        <input type="text" id="filterTeam" class="form-control mb-2" placeholder="Team">
+        <button class="btn btn-dark w-100 mt-3" id="applyFiltersBtn">Apply Filters</button>
+        <button class="btn btn-outline-secondary w-100 mt-2" id="resetFiltersBtn">Reset All</button>
     </div>
 
-    <div class="table-filters">
-      <div class="filter-input-group"><label><i class="fas fa-search me-1"></i>Name</label><input type="text" id="tableSearchName" class="form-control form-control-sm" placeholder="Search name..."></div>
-      <div class="filter-input-group"><label><i class="fas fa-briefcase me-1"></i>Designation</label><input type="text" id="tableSearchDesignation" class="form-control form-control-sm" placeholder="Role..."></div>
-      <div class="filter-input-group"><label><i class="fas fa-building me-1"></i>Department</label><input type="text" id="tableSearchDept" class="form-control form-control-sm" placeholder="Dept..."></div>
-      <div class="filter-input-group"><label><i class="fas fa-tag me-1"></i>Team</label><input type="text" id="tableSearchTeam" class="form-control form-control-sm" placeholder="Team..."></div>
-      <div class="filter-input-group"><label><i class="fas fa-chart-line me-1"></i>Min %</label><input type="number" id="tableSearchMinProfile" class="form-control form-control-sm" placeholder="Min %" min="0" max="100"></div>
-      <div><button class="btn btn-sm btn-outline-primary" id="clearTableFiltersBtn"><i class="fas fa-eraser me-1"></i>Clear</button></div>
+    <!-- Employee Modal -->
+    <div class="modal fade" id="employeeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalTitle"><i class="fas fa-user-plus me-2"></i>Add Employee</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-2"><label>Employee ID</label><input type="text" id="empId"
+                                class="form-control" readonly></div>
+                        <div class="col-md-6 mb-2"><label>Full Name *</label><input type="text" id="empName"
+                                class="form-control"></div>
+                        <div class="col-md-6 mb-2"><label>Designation</label><input type="text" id="empDesignation"
+                                class="form-control"></div>
+                        <div class="col-md-6 mb-2"><label>Department</label><input type="text" id="empDepartment"
+                                class="form-control"></div>
+                        <div class="col-md-6 mb-2"><label>Team</label><input type="text" id="empTeam"
+                                class="form-control"></div>
+                        <div class="col-md-6 mb-2"><label>Supervisor</label><input type="text" id="empSupervisor"
+                                class="form-control"></div>
+                        <div class="col-md-6 mb-2"><label>Tenure</label><input type="text" id="empTenure"
+                                class="form-control"></div>
+                        <div class="col-md-6 mb-2"><label>Profile %</label><input type="number" id="empProfile"
+                                class="form-control" min="0" max="100" value="50"></div>
+                        <div class="col-md-6 mb-2"><label>Shift</label><input type="text" id="empShift"
+                                class="form-control"></div>
+                        <div class="col-md-6 mb-2"><label>City</label><input type="text" id="empCity"
+                                class="form-control"></div>
+                        <div class="col-12"><label>Avatar URL</label><input type="text" id="empAvatar"
+                                class="form-control" placeholder="https://randomuser.me/api/portraits/..."></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancel</button><button class="btn btn-dark" id="saveEmpBtn">Save
+                        Changes</button></div>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card p-0 overflow-hidden">
-      <div class="table-container"><table class="table"><thead><tr><th>ID</th><th>Name</th><th>Designation</th><th>Dept</th><th>Team</th><th>Profile</th><th>Role</th><th>Actions</th></tr></thead><tbody id="usersTable"></tbody></table></div>
+    <!-- Permissions Modal -->
+    <div class="modal fade" id="permissionsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5><i class="fas fa-shield-alt me-2"></i>Manage Roles</h5><button type="button"
+                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="permissionsList"></div>
+                    <hr><label>Assign Role to User</label>
+                    <div class="input-group mt-2"><input type="text" id="assignEmpId" class="form-control"
+                            placeholder="Employee ID"><select id="assignRole" class="form-select">
+                            <option value="admin">Admin</option>
+                            <option value="editor">Editor</option>
+                            <option value="viewer">Viewer</option>
+                        </select><button class="btn btn-dark" id="assignRoleBtn">Assign</button></div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <footer><i class="far fa-copyright me-1"></i>2026 NexusHR Pro — Employee Management System | <i class="fas fa-chart-line me-1"></i>Version 2.0</footer>
-</div>
 
-<!-- Filter Panel -->
-<div class="filter-panel" id="filterPanel">
-  <div class="d-flex justify-content-between mb-3"><h5><i class="fas fa-sliders-h me-2"></i>Advanced Filters</h5><button class="btn-close" onclick="closeFilterSidebar()"></button></div>
-  <input type="text" id="filterJob" class="form-control mb-2" placeholder="Job Title">
-  <input type="text" id="filterDept" class="form-control mb-2" placeholder="Department">
-  <input type="text" id="filterTeam" class="form-control mb-2" placeholder="Team">
-  <button class="btn btn-dark w-100 mt-3" id="applyFiltersBtn">Apply Filters</button>
-  <button class="btn btn-outline-secondary w-100 mt-2" id="resetFiltersBtn">Reset All</button>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ==================== DATA ====================
+        let employees = [
+            { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "2 Yrs", profile: 95, shift: "Morning", city: "New York", avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
+            { id: "0002", name: "Chance Stanton", designation: "Team Lead", department: "IT", team: "Beta", supervisor: "Sarah Lee", tenure: "3 Yrs", profile: 78, shift: "Morning", city: "Austin", avatar: "https://randomuser.me/api/portraits/men/32.jpg", role: "editor" },
+            { id: "0003", name: "Gretchen Lubin", designation: "HR Specialist", department: "HR", team: "Gamma", supervisor: "Mike Ross", tenure: "1 Yr", profile: 62, shift: "Evening", city: "Seattle", avatar: "https://randomuser.me/api/portraits/women/44.jpg", role: "viewer" },
+            { id: "0004", name: "Marcus Chen", designation: "Analyst", department: "Finance", team: "Delta", supervisor: "Lisa Wong", tenure: "2 Yrs", profile: 88, shift: "Morning", city: "Chicago", avatar: "https://randomuser.me/api/portraits/men/22.jpg", role: "editor" },
+            { id: "0005", name: "Sophia Rodriguez", designation: "Coordinator", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "1 Yr", profile: 45, shift: "Night", city: "Miami", avatar: "https://randomuser.me/api/portraits/women/90.jpg", role: "viewer" }
+        ];
 
-<!-- Employee Modal -->
-<div class="modal fade" id="employeeModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content"><div class="modal-header bg-dark text-white"><h5 class="modal-title" id="modalTitle"><i class="fas fa-user-plus me-2"></i>Add Employee</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-      <div class="modal-body"><div class="row"><div class="col-md-6 mb-2"><label>Employee ID</label><input type="text" id="empId" class="form-control" readonly></div><div class="col-md-6 mb-2"><label>Full Name *</label><input type="text" id="empName" class="form-control"></div><div class="col-md-6 mb-2"><label>Designation</label><input type="text" id="empDesignation" class="form-control"></div><div class="col-md-6 mb-2"><label>Department</label><input type="text" id="empDepartment" class="form-control"></div><div class="col-md-6 mb-2"><label>Team</label><input type="text" id="empTeam" class="form-control"></div><div class="col-md-6 mb-2"><label>Supervisor</label><input type="text" id="empSupervisor" class="form-control"></div><div class="col-md-6 mb-2"><label>Tenure</label><input type="text" id="empTenure" class="form-control"></div><div class="col-md-6 mb-2"><label>Profile %</label><input type="number" id="empProfile" class="form-control" min="0" max="100" value="50"></div><div class="col-md-6 mb-2"><label>Shift</label><input type="text" id="empShift" class="form-control"></div><div class="col-md-6 mb-2"><label>City</label><input type="text" id="empCity" class="form-control"></div><div class="col-12"><label>Avatar URL</label><input type="text" id="empAvatar" class="form-control" placeholder="https://randomuser.me/api/portraits/..."></div></div></div>
-      <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-dark" id="saveEmpBtn">Save Changes</button></div>
-    </div>
-  </div>
-</div>
+        let auditLog = [];
+        let currentFilters = { job: "", dept: "", team: "" };
+        let tableFilters = { name: "", designation: "", dept: "", team: "", minProfile: "" };
+        let editMode = false;
+        let employeeModal, permissionsModal;
+        let profileChart, deptChart;
 
-<!-- Permissions Modal -->
-<div class="modal fade" id="permissionsModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-dark text-white"><h5><i class="fas fa-shield-alt me-2"></i>Manage Roles</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="permissionsList"></div><hr><label>Assign Role to User</label><div class="input-group mt-2"><input type="text" id="assignEmpId" class="form-control" placeholder="Employee ID"><select id="assignRole" class="form-select"><option value="admin">Admin</option><option value="editor">Editor</option><option value="viewer">Viewer</option></select><button class="btn btn-dark" id="assignRoleBtn">Assign</button></div></div></div></div>
-</div>
+        function showToast(msg) {
+            let toast = document.createElement("div");
+            toast.className = "toast-msg";
+            toast.innerHTML = `<i class="fas fa-check-circle text-success me-2"></i>${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+            document.getElementById("lastUpdated").innerHTML = new Date().toLocaleTimeString();
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// ==================== DATA ====================
-let employees = [
-  { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "2 Yrs", profile: 95, shift: "Morning", city: "New York", avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
-  { id: "0002", name: "Chance Stanton", designation: "Team Lead", department: "IT", team: "Beta", supervisor: "Sarah Lee", tenure: "3 Yrs", profile: 78, shift: "Morning", city: "Austin", avatar: "https://randomuser.me/api/portraits/men/32.jpg", role: "editor" },
-  { id: "0003", name: "Gretchen Lubin", designation: "HR Specialist", department: "HR", team: "Gamma", supervisor: "Mike Ross", tenure: "1 Yr", profile: 62, shift: "Evening", city: "Seattle", avatar: "https://randomuser.me/api/portraits/women/44.jpg", role: "viewer" },
-  { id: "0004", name: "Marcus Chen", designation: "Analyst", department: "Finance", team: "Delta", supervisor: "Lisa Wong", tenure: "2 Yrs", profile: 88, shift: "Morning", city: "Chicago", avatar: "https://randomuser.me/api/portraits/men/22.jpg", role: "editor" },
-  { id: "0005", name: "Sophia Rodriguez", designation: "Coordinator", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "1 Yr", profile: 45, shift: "Night", city: "Miami", avatar: "https://randomuser.me/api/portraits/women/90.jpg", role: "viewer" }
-];
+        function addLog(action, details) { auditLog.unshift({ time: new Date().toLocaleString(), action, details }); if (auditLog.length > 20) auditLog.pop(); }
 
-let auditLog = [];
-let currentFilters = { job: "", dept: "", team: "" };
-let tableFilters = { name: "", designation: "", dept: "", team: "", minProfile: "" };
-let editMode = false;
-let employeeModal, permissionsModal;
-let profileChart, deptChart;
+        function getSidebarFilteredEmployees() { return employees.filter(emp => { if (currentFilters.job && !emp.designation.toLowerCase().includes(currentFilters.job.toLowerCase())) return false; if (currentFilters.dept && !emp.department.toLowerCase().includes(currentFilters.dept.toLowerCase())) return false; if (currentFilters.team && !emp.team.toLowerCase().includes(currentFilters.team.toLowerCase())) return false; return true; }); }
 
-function showToast(msg) {
-  let toast = document.createElement("div");
-  toast.className = "toast-msg";
-  toast.innerHTML = `<i class="fas fa-check-circle text-success me-2"></i>${msg}`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2500);
-  document.getElementById("lastUpdated").innerHTML = new Date().toLocaleTimeString();
-}
+        function getTableFilteredEmployees() { return employees.filter(emp => { if (tableFilters.name && !emp.name.toLowerCase().includes(tableFilters.name.toLowerCase())) return false; if (tableFilters.designation && !emp.designation.toLowerCase().includes(tableFilters.designation.toLowerCase())) return false; if (tableFilters.dept && !emp.department.toLowerCase().includes(tableFilters.dept.toLowerCase())) return false; if (tableFilters.team && !emp.team.toLowerCase().includes(tableFilters.team.toLowerCase())) return false; if (tableFilters.minProfile && emp.profile < parseInt(tableFilters.minProfile)) return false; return true; }); }
 
-function addLog(action, details) { auditLog.unshift({ time: new Date().toLocaleString(), action, details }); if (auditLog.length > 20) auditLog.pop(); }
+        function getProfileClass(percent) { return percent < 40 ? "low" : percent < 70 ? "medium" : "high"; }
+        function renderProfile(percent) { let cls = getProfileClass(percent); return `<div class="profile-bar ${cls}"><div class="profile-fill" style="width:${percent}%"></div></div><small class="text-muted">${percent}%</small>`; }
+        function getRoleBadge(role) { let icon = role === "admin" ? "<i class='fas fa-crown'></i>" : (role === "editor" ? "<i class='fas fa-edit'></i>" : "<i class='fas fa-eye'></i>"); return `<span class="role-badge">${icon} ${role.toUpperCase()}</span>`; }
 
-function getSidebarFilteredEmployees() { return employees.filter(emp => { if (currentFilters.job && !emp.designation.toLowerCase().includes(currentFilters.job.toLowerCase())) return false; if (currentFilters.dept && !emp.department.toLowerCase().includes(currentFilters.dept.toLowerCase())) return false; if (currentFilters.team && !emp.team.toLowerCase().includes(currentFilters.team.toLowerCase())) return false; return true; }); }
+        function updateCharts() {
+            let low = employees.filter(e => e.profile < 40).length, mid = employees.filter(e => e.profile >= 40 && e.profile < 70).length, high = employees.filter(e => e.profile >= 70).length;
+            let deptMap = new Map(); employees.forEach(e => deptMap.set(e.department, (deptMap.get(e.department) || 0) + 1));
+            if (profileChart) profileChart.destroy(); if (deptChart) deptChart.destroy();
+            profileChart = new Chart(document.getElementById('profileChartCanvas'), { type: 'doughnut', data: { labels: ['Low (<40%)', 'Medium (40-69%)', 'High (≥70%)'], datasets: [{ data: [low, mid, high], backgroundColor: ['#ef4444', '#f59e0b', '#10b981'] }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } } });
+            deptChart = new Chart(document.getElementById('deptChartCanvas'), { type: 'bar', data: { labels: Array.from(deptMap.keys()), datasets: [{ label: 'Employees', data: Array.from(deptMap.values()), backgroundColor: '#3b82f6', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
+        }
 
-function getTableFilteredEmployees() { return employees.filter(emp => { if (tableFilters.name && !emp.name.toLowerCase().includes(tableFilters.name.toLowerCase())) return false; if (tableFilters.designation && !emp.designation.toLowerCase().includes(tableFilters.designation.toLowerCase())) return false; if (tableFilters.dept && !emp.department.toLowerCase().includes(tableFilters.dept.toLowerCase())) return false; if (tableFilters.team && !emp.team.toLowerCase().includes(tableFilters.team.toLowerCase())) return false; if (tableFilters.minProfile && emp.profile < parseInt(tableFilters.minProfile)) return false; return true; }); }
+        function renderStats() {
+            let total = employees.length, avgProfile = Math.round(employees.reduce((a, b) => a + b.profile, 0) / total), highPerf = employees.filter(e => e.profile >= 80).length;
+            document.getElementById("statsCards").innerHTML = `<div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-users fa-2x text-primary"></i><h2 class="fw-bold mt-2">${total}</h2><p class="text-muted mb-0">Total Employees</p><small class="text-success"><i class="fas fa-arrow-up"></i> +12%</small></div></div><div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-chart-line fa-2x text-success"></i><h2 class="fw-bold mt-2">${avgProfile}%</h2><p class="text-muted mb-0">Avg Profile</p><small class="text-info"><i class="fas fa-chart-line"></i> Active</small></div></div><div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-trophy fa-2x text-warning"></i><h2 class="fw-bold mt-2">${highPerf}</h2><p class="text-muted mb-0">High Performers</p><small class="text-success"><i class="fas fa-medal"></i> Top talent</small></div></div><div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-building fa-2x text-info"></i><h2 class="fw-bold mt-2">${new Set(employees.map(e => e.department)).size}</h2><p class="text-muted mb-0">Departments</p><small class="text-muted"><i class="fas fa-organization"></i> Active</small></div></div>`;
+            updateCharts();
+        }
 
-function getProfileClass(percent) { return percent < 40 ? "low" : percent < 70 ? "medium" : "high"; }
-function renderProfile(percent) { let cls = getProfileClass(percent); return `<div class="profile-bar ${cls}"><div class="profile-fill" style="width:${percent}%"></div></div><small class="text-muted">${percent}%</small>`; }
-function getRoleBadge(role) { let icon = role === "admin" ? "<i class='fas fa-crown'></i>" : (role === "editor" ? "<i class='fas fa-edit'></i>" : "<i class='fas fa-eye'></i>"); return `<span class="role-badge">${icon} ${role.toUpperCase()}</span>`; }
+        function renderTables() {
+            let sidebarFiltered = getSidebarFilteredEmployees(); renderStats();
+            document.getElementById("dashboardTable").innerHTML = sidebarFiltered.map(emp => `<tr><td class="fw-semibold">${emp.id}</td><td><img src="${emp.avatar}" class="avatar" onerror="this.src='https://randomuser.me/api/portraits/lego/1.jpg'"> ${emp.name}</td><td>${emp.designation}</td><td><span class="badge bg-light border px-3 py-1 rounded-pill">${emp.department}</span></td><td>${emp.team}</td><td>${emp.supervisor}</td><td>${renderProfile(emp.profile)}</td></tr>`).join("");
+            let tableFiltered = getTableFilteredEmployees();
+            document.getElementById("usersTable").innerHTML = tableFiltered.map(emp => `<tr><td class="fw-semibold">${emp.id}</td><td><img src="${emp.avatar}" class="avatar"> ${emp.name}</td><td>${emp.designation}</td><td>${emp.department}</td><td>${emp.team}</td><td>${renderProfile(emp.profile)}</td><td>${getRoleBadge(emp.role)}</td><td class="action-icons"><i class="fas fa-edit text-primary" onclick="editEmployee('${emp.id}')" title="Edit"></i> <i class="fas fa-trash-alt text-danger" onclick="deleteEmployee('${emp.id}')" title="Delete"></i> <i class="fas fa-shield-alt" onclick="openPermissionsForUser('${emp.id}')" title="Permissions"></i></td></tr>`).join("");
+        }
 
-function updateCharts() {
-  let low = employees.filter(e => e.profile < 40).length, mid = employees.filter(e => e.profile >= 40 && e.profile < 70).length, high = employees.filter(e => e.profile >= 70).length;
-  let deptMap = new Map(); employees.forEach(e => deptMap.set(e.department, (deptMap.get(e.department) || 0) + 1));
-  if (profileChart) profileChart.destroy(); if (deptChart) deptChart.destroy();
-  profileChart = new Chart(document.getElementById('profileChartCanvas'), { type: 'doughnut', data: { labels: ['Low (<40%)', 'Medium (40-69%)', 'High (≥70%)'], datasets: [{ data: [low, mid, high], backgroundColor: ['#ef4444', '#f59e0b', '#10b981'] }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } } });
-  deptChart = new Chart(document.getElementById('deptChartCanvas'), { type: 'bar', data: { labels: Array.from(deptMap.keys()), datasets: [{ label: 'Employees', data: Array.from(deptMap.values()), backgroundColor: '#3b82f6', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
-}
+        function generateId() { let max = 0; employees.forEach(e => { let n = parseInt(e.id); if (n > max) max = n; }); return String(max + 1).padStart(4, '0'); }
+        function openEmployeeModal(id = null) { editMode = !!id; document.getElementById("modalTitle").innerHTML = editMode ? "<i class='fas fa-edit me-2'></i>Edit Employee" : "<i class='fas fa-user-plus me-2'></i>Add Employee"; if (id) { let emp = employees.find(e => e.id === id); if (emp) { document.getElementById("empId").value = emp.id; document.getElementById("empName").value = emp.name; document.getElementById("empDesignation").value = emp.designation; document.getElementById("empDepartment").value = emp.department; document.getElementById("empTeam").value = emp.team; document.getElementById("empSupervisor").value = emp.supervisor; document.getElementById("empTenure").value = emp.tenure; document.getElementById("empProfile").value = emp.profile; document.getElementById("empShift").value = emp.shift; document.getElementById("empCity").value = emp.city; document.getElementById("empAvatar").value = emp.avatar; } } else { document.getElementById("empId").value = generateId(); document.getElementById("empName").value = ""; document.getElementById("empDesignation").value = ""; document.getElementById("empDepartment").value = ""; document.getElementById("empTeam").value = ""; document.getElementById("empSupervisor").value = ""; document.getElementById("empTenure").value = ""; document.getElementById("empProfile").value = 50; document.getElementById("empShift").value = "Morning"; document.getElementById("empCity").value = ""; document.getElementById("empAvatar").value = "https://randomuser.me/api/portraits/lego/1.jpg"; } employeeModal.show(); }
+        function saveEmployee() { let id = document.getElementById("empId").value, name = document.getElementById("empName").value.trim(); if (!name) { alert("Name is required!"); return; } let profile = parseInt(document.getElementById("empProfile").value); if (isNaN(profile) || profile < 0 || profile > 100) { alert("Profile must be 0-100"); return; } let newEmp = { id, name, profile, role: editMode ? (employees.find(e => e.id === id)?.role || "viewer") : "viewer", designation: document.getElementById("empDesignation").value.trim() || "Staff", department: document.getElementById("empDepartment").value.trim() || "General", team: document.getElementById("empTeam").value.trim() || "Core", supervisor: document.getElementById("empSupervisor").value.trim() || "Admin", tenure: document.getElementById("empTenure").value.trim() || "0 Yr", shift: document.getElementById("empShift").value.trim() || "Morning", city: document.getElementById("empCity").value.trim() || "Unknown", avatar: document.getElementById("empAvatar").value.trim() || "https://randomuser.me/api/portraits/lego/1.jpg" }; if (editMode) { let idx = employees.findIndex(e => e.id === id); if (idx !== -1) employees[idx] = newEmp; addLog("UPDATE", `${name}`); } else { if (employees.some(e => e.id === id)) { alert("Duplicate ID!"); return; } employees.push(newEmp); addLog("CREATE", `${name}`); } renderTables(); employeeModal.hide(); showToast(`${editMode ? "Updated" : "Added"} ${name}`); }
+        function deleteEmployee(id) { let emp = employees.find(e => e.id === id); if (confirm(`Delete ${emp?.name} permanently? This action cannot be undone.`)) { employees = employees.filter(e => e.id !== id); addLog("DELETE", `${emp?.name}`); renderTables(); showToast(`Deleted ${emp?.name}`); } }
+        function editEmployee(id) { openEmployeeModal(id); }
+        function openPermissionsModal() { renderPermissionsList(); permissionsModal.show(); }
+        function renderPermissionsList() { document.getElementById("permissionsList").innerHTML = employees.map(emp => `<div class="d-flex justify-content-between align-items-center border-bottom py-2"><div><strong>${emp.name}</strong> <small class="text-muted">(${emp.id})</small></div><div>${getRoleBadge(emp.role)} <button class="btn btn-sm btn-outline-secondary ms-2" onclick="assignRole('${emp.id}', 'editor')">Editor</button><button class="btn btn-sm btn-outline-primary ms-1" onclick="assignRole('${emp.id}', 'admin')">Admin</button></div></div>`).join(''); }
+        function assignRole(empId, newRole) { let emp = employees.find(e => e.id === empId); if (emp) { emp.role = newRole; addLog("PERMISSION", `${emp.name} → ${newRole}`); renderTables(); if (document.getElementById("permissionsList")) renderPermissionsList(); showToast(`${emp.name} is now ${newRole}`); } }
+        function assignRoleFromInput() { let empId = document.getElementById("assignEmpId").value.trim(), newRole = document.getElementById("assignRole").value, emp = employees.find(e => e.id === empId); if (!emp) { alert("Employee not found!"); return; } emp.role = newRole; addLog("PERMISSION", `${emp.name} → ${newRole}`); renderTables(); showToast(`${emp.name} role updated to ${newRole}`); document.getElementById("assignEmpId").value = ""; permissionsModal.hide(); }
+        function openPermissionsForUser(id) { openPermissionsModal(); setTimeout(() => { document.getElementById("assignEmpId").value = id; }, 200); }
+        function applySidebarFilters() { currentFilters = { job: document.getElementById("filterJob").value.trim(), dept: document.getElementById("filterDept").value.trim(), team: document.getElementById("filterTeam").value.trim() }; renderTables(); closeFilterSidebar(); showToast("Filters applied"); }
+        function resetSidebarFilters() { document.getElementById("filterJob").value = ""; document.getElementById("filterDept").value = ""; document.getElementById("filterTeam").value = ""; currentFilters = { job: "", dept: "", team: "" }; renderTables(); showToast("Filters reset"); }
+        function updateTableFilters() { tableFilters = { name: document.getElementById("tableSearchName").value.trim(), designation: document.getElementById("tableSearchDesignation").value.trim(), dept: document.getElementById("tableSearchDept").value.trim(), team: document.getElementById("tableSearchTeam").value.trim(), minProfile: document.getElementById("tableSearchMinProfile").value.trim() }; renderTables(); }
+        function clearTableFilters() { document.getElementById("tableSearchName").value = ""; document.getElementById("tableSearchDesignation").value = ""; document.getElementById("tableSearchDept").value = ""; document.getElementById("tableSearchTeam").value = ""; document.getElementById("tableSearchMinProfile").value = ""; tableFilters = { name: "", designation: "", dept: "", team: "", minProfile: "" }; renderTables(); showToast("Table filters cleared"); }
+        function exportToCSV() { let filtered = getTableFilteredEmployees(); let headers = ["ID", "Name", "Designation", "Department", "Team", "Supervisor", "Profile%", "Shift", "City", "Role"]; let rows = filtered.map(e => [e.id, e.name, e.designation, e.department, e.team, e.supervisor, e.profile, e.shift, e.city, e.role]); let csv = [headers, ...rows].map(r => r.join(",")).join("\n"); let blob = new Blob([csv], { type: "text/csv" }); let a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `employees_export_${new Date().toISOString().slice(0, 19)}.csv`; a.click(); showToast("Export complete"); }
+        function showSection(section) { document.getElementById("dashboardSection").style.display = section === "dashboard" ? "block" : "none"; document.getElementById("usersSection").style.display = section === "users" ? "block" : "none"; renderTables(); if (window.innerWidth <= 992) { document.getElementById("sidebar").classList.remove("active"); document.getElementById("sidebarOverlay").classList.remove("active"); } }
+        function toggleSubmenu(menuId) { let menu = document.getElementById(menuId); if (menu.style.display === "block") menu.style.display = "none"; else menu.style.display = "block"; }
+        function openFilterSidebar() { document.getElementById("filterPanel").classList.add("active"); }
+        function closeFilterSidebar() { document.getElementById("filterPanel").classList.remove("active"); }
+        function showAuditLog() { if (auditLog.length === 0) alert("No actions recorded yet."); else alert("📋 AUDIT LOG (Last 10 actions):\n\n" + auditLog.slice(0, 10).map(l => `${l.time} - ${l.action}: ${l.details}`).join("\n")); }
+        function showHelp() { alert("📘 NexusHR Help Center\n\n🔹 Quick Tips:\n• Add employees using the 'Add Employee' button\n• Edit/Delete using action icons (✏️ 🗑️)\n• Use filters to find specific employees\n• Export data to CSV for reporting\n• Dark mode toggle in top bar\n• Roles: Admin, Editor, Viewer\n\nFor support: support@nexushr.com"); }
+        function toggleDarkMode() { document.body.classList.toggle("dark-mode"); let isDark = document.body.classList.contains("dark-mode"); localStorage.setItem("theme", isDark ? "dark" : "light"); let btn = document.getElementById("darkModeBtn"); btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; showToast(isDark ? "Dark mode enabled" : "Light mode enabled"); }
+        function initTheme() { if (localStorage.getItem("theme") === "dark") { document.body.classList.add("dark-mode"); document.getElementById("darkModeBtn").innerHTML = '<i class="fas fa-sun"></i>'; } }
+        function toggleSidebar() { document.getElementById("sidebar").classList.toggle("active"); document.getElementById("sidebarOverlay").classList.toggle("active"); }
+        function closeSidebarOnOverlay() { document.getElementById("sidebar").classList.remove("active"); document.getElementById("sidebarOverlay").classList.remove("active"); }
 
-function renderStats() {
-  let total = employees.length, avgProfile = Math.round(employees.reduce((a, b) => a + b.profile, 0) / total), highPerf = employees.filter(e => e.profile >= 80).length;
-  document.getElementById("statsCards").innerHTML = `<div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-users fa-2x text-primary"></i><h2 class="fw-bold mt-2">${total}</h2><p class="text-muted mb-0">Total Employees</p><small class="text-success"><i class="fas fa-arrow-up"></i> +12%</small></div></div><div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-chart-line fa-2x text-success"></i><h2 class="fw-bold mt-2">${avgProfile}%</h2><p class="text-muted mb-0">Avg Profile</p><small class="text-info"><i class="fas fa-chart-line"></i> Active</small></div></div><div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-trophy fa-2x text-warning"></i><h2 class="fw-bold mt-2">${highPerf}</h2><p class="text-muted mb-0">High Performers</p><small class="text-success"><i class="fas fa-medal"></i> Top talent</small></div></div><div class="col-md-3"><div class="stat-card text-center"><i class="fas fa-building fa-2x text-info"></i><h2 class="fw-bold mt-2">${new Set(employees.map(e => e.department)).size}</h2><p class="text-muted mb-0">Departments</p><small class="text-muted"><i class="fas fa-organization"></i> Active</small></div></div>`;
-  updateCharts();
-}
-
-function renderTables() {
-  let sidebarFiltered = getSidebarFilteredEmployees(); renderStats();
-  document.getElementById("dashboardTable").innerHTML = sidebarFiltered.map(emp => `<tr><td class="fw-semibold">${emp.id}</td><td><img src="${emp.avatar}" class="avatar" onerror="this.src='https://randomuser.me/api/portraits/lego/1.jpg'"> ${emp.name}</td><td>${emp.designation}</td><td><span class="badge bg-light border px-3 py-1 rounded-pill">${emp.department}</span></td><td>${emp.team}</td><td>${emp.supervisor}</td><td>${renderProfile(emp.profile)}</td></tr>`).join("");
-  let tableFiltered = getTableFilteredEmployees();
-  document.getElementById("usersTable").innerHTML = tableFiltered.map(emp => `<tr><td class="fw-semibold">${emp.id}</td><td><img src="${emp.avatar}" class="avatar"> ${emp.name}</td><td>${emp.designation}</td><td>${emp.department}</td><td>${emp.team}</td><td>${renderProfile(emp.profile)}</td><td>${getRoleBadge(emp.role)}</td><td class="action-icons"><i class="fas fa-edit text-primary" onclick="editEmployee('${emp.id}')" title="Edit"></i> <i class="fas fa-trash-alt text-danger" onclick="deleteEmployee('${emp.id}')" title="Delete"></i> <i class="fas fa-shield-alt" onclick="openPermissionsForUser('${emp.id}')" title="Permissions"></i></td></tr>`).join("");
-}
-
-function generateId() { let max = 0; employees.forEach(e => { let n = parseInt(e.id); if (n > max) max = n; }); return String(max + 1).padStart(4, '0'); }
-function openEmployeeModal(id = null) { editMode = !!id; document.getElementById("modalTitle").innerHTML = editMode ? "<i class='fas fa-edit me-2'></i>Edit Employee" : "<i class='fas fa-user-plus me-2'></i>Add Employee"; if (id) { let emp = employees.find(e => e.id === id); if (emp) { document.getElementById("empId").value = emp.id; document.getElementById("empName").value = emp.name; document.getElementById("empDesignation").value = emp.designation; document.getElementById("empDepartment").value = emp.department; document.getElementById("empTeam").value = emp.team; document.getElementById("empSupervisor").value = emp.supervisor; document.getElementById("empTenure").value = emp.tenure; document.getElementById("empProfile").value = emp.profile; document.getElementById("empShift").value = emp.shift; document.getElementById("empCity").value = emp.city; document.getElementById("empAvatar").value = emp.avatar; } } else { document.getElementById("empId").value = generateId(); document.getElementById("empName").value = ""; document.getElementById("empDesignation").value = ""; document.getElementById("empDepartment").value = ""; document.getElementById("empTeam").value = ""; document.getElementById("empSupervisor").value = ""; document.getElementById("empTenure").value = ""; document.getElementById("empProfile").value = 50; document.getElementById("empShift").value = "Morning"; document.getElementById("empCity").value = ""; document.getElementById("empAvatar").value = "https://randomuser.me/api/portraits/lego/1.jpg"; } employeeModal.show(); }
-function saveEmployee() { let id = document.getElementById("empId").value, name = document.getElementById("empName").value.trim(); if (!name) { alert("Name is required!"); return; } let profile = parseInt(document.getElementById("empProfile").value); if (isNaN(profile) || profile < 0 || profile > 100) { alert("Profile must be 0-100"); return; } let newEmp = { id, name, profile, role: editMode ? (employees.find(e => e.id === id)?.role || "viewer") : "viewer", designation: document.getElementById("empDesignation").value.trim() || "Staff", department: document.getElementById("empDepartment").value.trim() || "General", team: document.getElementById("empTeam").value.trim() || "Core", supervisor: document.getElementById("empSupervisor").value.trim() || "Admin", tenure: document.getElementById("empTenure").value.trim() || "0 Yr", shift: document.getElementById("empShift").value.trim() || "Morning", city: document.getElementById("empCity").value.trim() || "Unknown", avatar: document.getElementById("empAvatar").value.trim() || "https://randomuser.me/api/portraits/lego/1.jpg" }; if (editMode) { let idx = employees.findIndex(e => e.id === id); if (idx !== -1) employees[idx] = newEmp; addLog("UPDATE", `${name}`); } else { if (employees.some(e => e.id === id)) { alert("Duplicate ID!"); return; } employees.push(newEmp); addLog("CREATE", `${name}`); } renderTables(); employeeModal.hide(); showToast(`${editMode ? "Updated" : "Added"} ${name}`); }
-function deleteEmployee(id) { let emp = employees.find(e => e.id === id); if (confirm(`Delete ${emp?.name} permanently? This action cannot be undone.`)) { employees = employees.filter(e => e.id !== id); addLog("DELETE", `${emp?.name}`); renderTables(); showToast(`Deleted ${emp?.name}`); } }
-function editEmployee(id) { openEmployeeModal(id); }
-function openPermissionsModal() { renderPermissionsList(); permissionsModal.show(); }
-function renderPermissionsList() { document.getElementById("permissionsList").innerHTML = employees.map(emp => `<div class="d-flex justify-content-between align-items-center border-bottom py-2"><div><strong>${emp.name}</strong> <small class="text-muted">(${emp.id})</small></div><div>${getRoleBadge(emp.role)} <button class="btn btn-sm btn-outline-secondary ms-2" onclick="assignRole('${emp.id}', 'editor')">Editor</button><button class="btn btn-sm btn-outline-primary ms-1" onclick="assignRole('${emp.id}', 'admin')">Admin</button></div></div>`).join(''); }
-function assignRole(empId, newRole) { let emp = employees.find(e => e.id === empId); if (emp) { emp.role = newRole; addLog("PERMISSION", `${emp.name} → ${newRole}`); renderTables(); if (document.getElementById("permissionsList")) renderPermissionsList(); showToast(`${emp.name} is now ${newRole}`); } }
-function assignRoleFromInput() { let empId = document.getElementById("assignEmpId").value.trim(), newRole = document.getElementById("assignRole").value, emp = employees.find(e => e.id === empId); if (!emp) { alert("Employee not found!"); return; } emp.role = newRole; addLog("PERMISSION", `${emp.name} → ${newRole}`); renderTables(); showToast(`${emp.name} role updated to ${newRole}`); document.getElementById("assignEmpId").value = ""; permissionsModal.hide(); }
-function openPermissionsForUser(id) { openPermissionsModal(); setTimeout(() => { document.getElementById("assignEmpId").value = id; }, 200); }
-function applySidebarFilters() { currentFilters = { job: document.getElementById("filterJob").value.trim(), dept: document.getElementById("filterDept").value.trim(), team: document.getElementById("filterTeam").value.trim() }; renderTables(); closeFilterSidebar(); showToast("Filters applied"); }
-function resetSidebarFilters() { document.getElementById("filterJob").value = ""; document.getElementById("filterDept").value = ""; document.getElementById("filterTeam").value = ""; currentFilters = { job: "", dept: "", team: "" }; renderTables(); showToast("Filters reset"); }
-function updateTableFilters() { tableFilters = { name: document.getElementById("tableSearchName").value.trim(), designation: document.getElementById("tableSearchDesignation").value.trim(), dept: document.getElementById("tableSearchDept").value.trim(), team: document.getElementById("tableSearchTeam").value.trim(), minProfile: document.getElementById("tableSearchMinProfile").value.trim() }; renderTables(); }
-function clearTableFilters() { document.getElementById("tableSearchName").value = ""; document.getElementById("tableSearchDesignation").value = ""; document.getElementById("tableSearchDept").value = ""; document.getElementById("tableSearchTeam").value = ""; document.getElementById("tableSearchMinProfile").value = ""; tableFilters = { name: "", designation: "", dept: "", team: "", minProfile: "" }; renderTables(); showToast("Table filters cleared"); }
-function exportToCSV() { let filtered = getTableFilteredEmployees(); let headers = ["ID", "Name", "Designation", "Department", "Team", "Supervisor", "Profile%", "Shift", "City", "Role"]; let rows = filtered.map(e => [e.id, e.name, e.designation, e.department, e.team, e.supervisor, e.profile, e.shift, e.city, e.role]); let csv = [headers, ...rows].map(r => r.join(",")).join("\n"); let blob = new Blob([csv], { type: "text/csv" }); let a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `employees_export_${new Date().toISOString().slice(0,19)}.csv`; a.click(); showToast("Export complete"); }
-function showSection(section) { document.getElementById("dashboardSection").style.display = section === "dashboard" ? "block" : "none"; document.getElementById("usersSection").style.display = section === "users" ? "block" : "none"; renderTables(); if (window.innerWidth <= 992) { document.getElementById("sidebar").classList.remove("active"); document.getElementById("sidebarOverlay").classList.remove("active"); } }
-function toggleSubmenu(menuId) { let menu = document.getElementById(menuId); if (menu.style.display === "block") menu.style.display = "none"; else menu.style.display = "block"; }
-function openFilterSidebar() { document.getElementById("filterPanel").classList.add("active"); }
-function closeFilterSidebar() { document.getElementById("filterPanel").classList.remove("active"); }
-function showAuditLog() { if (auditLog.length === 0) alert("No actions recorded yet."); else alert("📋 AUDIT LOG (Last 10 actions):\n\n" + auditLog.slice(0, 10).map(l => `${l.time} - ${l.action}: ${l.details}`).join("\n")); }
-function showHelp() { alert("📘 NexusHR Help Center\n\n🔹 Quick Tips:\n• Add employees using the 'Add Employee' button\n• Edit/Delete using action icons (✏️ 🗑️)\n• Use filters to find specific employees\n• Export data to CSV for reporting\n• Dark mode toggle in top bar\n• Roles: Admin, Editor, Viewer\n\nFor support: support@nexushr.com"); }
-function toggleDarkMode() { document.body.classList.toggle("dark-mode"); let isDark = document.body.classList.contains("dark-mode"); localStorage.setItem("theme", isDark ? "dark" : "light"); let btn = document.getElementById("darkModeBtn"); btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; showToast(isDark ? "Dark mode enabled" : "Light mode enabled"); }
-function initTheme() { if (localStorage.getItem("theme") === "dark") { document.body.classList.add("dark-mode"); document.getElementById("darkModeBtn").innerHTML = '<i class="fas fa-sun"></i>'; } }
-function toggleSidebar() { document.getElementById("sidebar").classList.toggle("active"); document.getElementById("sidebarOverlay").classList.toggle("active"); }
-function closeSidebarOnOverlay() { document.getElementById("sidebar").classList.remove("active"); document.getElementById("sidebarOverlay").classList.remove("active"); }
-
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("mobileSidebarToggle").addEventListener("click", toggleSidebar);
-  document.getElementById("sidebarOverlay").addEventListener("click", closeSidebarOnOverlay);
-  document.getElementById("darkModeBtn").addEventListener("click", toggleDarkMode);
-  document.getElementById("applyFiltersBtn").addEventListener("click", applySidebarFilters);
-  document.getElementById("resetFiltersBtn").addEventListener("click", resetSidebarFilters);
-  document.getElementById("saveEmpBtn").addEventListener("click", saveEmployee);
-  document.getElementById("assignRoleBtn").addEventListener("click", assignRoleFromInput);
-  document.getElementById("clearTableFiltersBtn").addEventListener("click", clearTableFilters);
-  document.getElementById("tableSearchName").addEventListener("input", updateTableFilters);
-  document.getElementById("tableSearchDesignation").addEventListener("input", updateTableFilters);
-  document.getElementById("tableSearchDept").addEventListener("input", updateTableFilters);
-  document.getElementById("tableSearchTeam").addEventListener("input", updateTableFilters);
-  document.getElementById("tableSearchMinProfile").addEventListener("input", updateTableFilters);
-  document.getElementById("dashboardSearch")?.addEventListener("input", function(e) { document.getElementById("tableSearchName").value = e.target.value; updateTableFilters(); });
-  employeeModal = new bootstrap.Modal(document.getElementById("employeeModal"));
-  permissionsModal = new bootstrap.Modal(document.getElementById("permissionsModal"));
-  initTheme(); renderTables(); showSection("dashboard");
-  document.getElementById("lastUpdated").innerHTML = new Date().toLocaleTimeString();
-});
-</script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("mobileSidebarToggle").addEventListener("click", toggleSidebar);
+            document.getElementById("sidebarOverlay").addEventListener("click", closeSidebarOnOverlay);
+            document.getElementById("darkModeBtn").addEventListener("click", toggleDarkMode);
+            document.getElementById("applyFiltersBtn").addEventListener("click", applySidebarFilters);
+            document.getElementById("resetFiltersBtn").addEventListener("click", resetSidebarFilters);
+            document.getElementById("saveEmpBtn").addEventListener("click", saveEmployee);
+            document.getElementById("assignRoleBtn").addEventListener("click", assignRoleFromInput);
+            document.getElementById("clearTableFiltersBtn").addEventListener("click", clearTableFilters);
+            document.getElementById("tableSearchName").addEventListener("input", updateTableFilters);
+            document.getElementById("tableSearchDesignation").addEventListener("input", updateTableFilters);
+            document.getElementById("tableSearchDept").addEventListener("input", updateTableFilters);
+            document.getElementById("tableSearchTeam").addEventListener("input", updateTableFilters);
+            document.getElementById("tableSearchMinProfile").addEventListener("input", updateTableFilters);
+            document.getElementById("dashboardSearch")?.addEventListener("input", function (e) { document.getElementById("tableSearchName").value = e.target.value; updateTableFilters(); });
+            employeeModal = new bootstrap.Modal(document.getElementById("employeeModal"));
+            permissionsModal = new bootstrap.Modal(document.getElementById("permissionsModal"));
+            initTheme(); renderTables(); showSection("dashboard");
+            document.getElementById("lastUpdated").innerHTML = new Date().toLocaleTimeString();
+        });
+    </script>
 </body>
+
 </html>
