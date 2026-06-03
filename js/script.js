@@ -1,4 +1,4 @@
-<script>
+
 let employees = [
   { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "2 Yrs", profile: 95, shift: "Morning", city: "New York", avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
   { id: "0002", name: "Chance Stanton", designation: "Team Lead", department: "IT", team: "Beta", supervisor: "Sarah Lee", tenure: "3 Yrs", profile: 78, shift: "Morning", city: "Austin", avatar: "https://randomuser.me/api/portraits/men/32.jpg", role: "editor" },
@@ -83,4 +83,3 @@ document.addEventListener("DOMContentLoaded",function(){
   permissionsModal=new bootstrap.Modal(document.getElementById("permissionsModal"));
   initTheme(); renderTables(); showSection("dashboard");
 });
-</script>
