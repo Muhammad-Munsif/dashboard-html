@@ -1,13 +1,8 @@
 
-let employees = [
-    { id: "0001", name: "Anika Vaccaro", designation: "Manager", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "2 Yrs", profile: 95, shift: "Morning", city: "New York", avatar: "https://randomuser.me/api/portraits/women/68.jpg", role: "admin" },
-    { id: "0002", name: "Chance Stanton", designation: "Team Lead", department: "IT", team: "Beta", supervisor: "Sarah Lee", tenure: "3 Yrs", profile: 78, shift: "Morning", city: "Austin", avatar: "https://randomuser.me/api/portraits/men/32.jpg", role: "editor" },
-    { id: "0003", name: "Gretchen Lubin", designation: "HR Specialist", department: "HR", team: "Gamma", supervisor: "Mike Ross", tenure: "1 Yr", profile: 62, shift: "Evening", city: "Seattle", avatar: "https://randomuser.me/api/portraits/women/44.jpg", role: "viewer" },
-    { id: "0004", name: "Marcus Chen", designation: "Analyst", department: "Finance", team: "Delta", supervisor: "Lisa Wong", tenure: "2 Yrs", profile: 88, shift: "Morning", city: "Chicago", avatar: "https://randomuser.me/api/portraits/men/22.jpg", role: "editor" },
-    { id: "0005", name: "Sophia Rodriguez", designation: "Coordinator", department: "Operations", team: "Alpha", supervisor: "John Smith", tenure: "1 Yr", profile: 45, shift: "Night", city: "Miami", avatar: "https://randomuser.me/api/portraits/women/90.jpg", role: "viewer" }
-];
+const API_BASE = window.location.origin + "/api";
 
-let auditLog = [], currentFilters = { job: "", dept: "", team: "" };
+let employees = [];
+let currentFilters = { job: "", dept: "", team: "" };
 let searchFilters = { name: "", designation: "", dept: "", minProfile: "" };
 let editMode = false, employeeModal, permissionsModal, profileChart, deptChart;
 let currentSection = "dashboard";
@@ -16,17 +11,25 @@ const isDark = () => document.body.classList.contains("dark");
 const chartTextColor = () => isDark() ? "#94a3b8" : "#64748b";
 const chartGridColor = () => isDark() ? "#334155" : "#e2e8f0";
 
-function showToast(msg) {
-    let t = document.createElement("div");
-    t.className = "toast-msg";
-    t.innerHTML = `<i class="fas fa-check-circle me-2" style="color:var(--success);"></i>${msg}`;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2500);
+async function api(url, options = {}) {
+    const res = await fetch(`${API_BASE}${url}`, {
+        headers: { "Content-Type": "application/json", ...options.headers },
+        ...options,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    return data;
 }
 
-function addLog(a, d) {
-    auditLog.unshift({ time: new Date().toLocaleString(), action: a, details: d });
-    if (auditLog.length > 20) auditLog.pop();
+function showToast(msg, isError = false) {
+    let t = document.createElement("div");
+    t.className = "toast-msg";
+    t.style.borderLeftColor = isError ? "var(--danger)" : "var(--success)";
+    const icon = isError ? "fa-exclamation-circle" : "fa-check-circle";
+    const color = isError ? "var(--danger)" : "var(--success)";
+    t.innerHTML = `<i class="fas ${icon} me-2" style="color:${color};"></i>${msg}`;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
 }
 
 function getSidebarFiltered() {
@@ -133,7 +136,7 @@ function updateCharts() {
 
 function renderStats() {
     let total = employees.length;
-    let avg = Math.round(employees.reduce((a, b) => a + b.profile, 0) / total);
+    let avg = total ? Math.round(employees.reduce((a, b) => a + b.profile, 0) / total) : 0;
     let high = employees.filter(e => e.profile >= 80).length;
     let depts = new Set(employees.map(e => e.department)).size;
 
@@ -164,50 +167,70 @@ function renderTables() {
     let sidebarFiltered = getSidebarFiltered();
     renderStats();
 
-    document.getElementById("dashboardTable").innerHTML = sidebarFiltered.map(e => `
-        <tr>
-            <td class="fw-semibold" data-label="ID">${e.id}</td>
-            <td data-label="Employee">${renderEmployeeCell(e)}</td>
-            <td data-label="Role">${e.designation}</td>
-            <td data-label="Department"><span class="badge dept-badge rounded-pill">${e.department}</span></td>
-            <td data-label="Team">${e.team}</td>
-            <td data-label="Supervisor">${e.supervisor}</td>
-            <td data-label="Profile">${renderProfile(e.profile)}</td>
-        </tr>
-    `).join("");
+    document.getElementById("dashboardTable").innerHTML = sidebarFiltered.length
+        ? sidebarFiltered.map(e => `
+            <tr>
+                <td class="fw-semibold" data-label="ID">${e.id}</td>
+                <td data-label="Employee">${renderEmployeeCell(e)}</td>
+                <td data-label="Role">${e.designation}</td>
+                <td data-label="Department"><span class="badge dept-badge rounded-pill">${e.department}</span></td>
+                <td data-label="Team">${e.team}</td>
+                <td data-label="Supervisor">${e.supervisor}</td>
+                <td data-label="Profile">${renderProfile(e.profile)}</td>
+            </tr>
+        `).join("")
+        : `<tr><td colspan="7" class="text-center text-muted py-4">No employees found</td></tr>`;
 
     let searchFiltered = getSearchFiltered();
-    document.getElementById("usersTable").innerHTML = searchFiltered.map(e => `
-        <tr>
-            <td class="fw-semibold" data-label="ID">${e.id}</td>
-            <td data-label="Name">${renderEmployeeCell(e)}</td>
-            <td data-label="Designation">${e.designation}</td>
-            <td data-label="Dept">${e.department}</td>
-            <td data-label="Team">${e.team}</td>
-            <td data-label="Profile">${renderProfile(e.profile)}</td>
-            <td data-label="Role">${getRoleBadge(e.role)}</td>
-            <td data-label="Actions">
-                <div class="action-btns">
-                    <div class="action-btn edit" onclick="editEmployee('${e.id}')" title="Edit"><i class="fas fa-edit"></i></div>
-                    <div class="action-btn delete" onclick="deleteEmployee('${e.id}')" title="Delete"><i class="fas fa-trash-alt"></i></div>
-                    <div class="action-btn permission" onclick="openPermissionsForUser('${e.id}')" title="Permissions"><i class="fas fa-shield-alt"></i></div>
-                </div>
-            </td>
-        </tr>
-    `).join("");
+    document.getElementById("usersTable").innerHTML = searchFiltered.length
+        ? searchFiltered.map(e => `
+            <tr>
+                <td class="fw-semibold" data-label="ID">${e.id}</td>
+                <td data-label="Name">${renderEmployeeCell(e)}</td>
+                <td data-label="Designation">${e.designation}</td>
+                <td data-label="Dept">${e.department}</td>
+                <td data-label="Team">${e.team}</td>
+                <td data-label="Profile">${renderProfile(e.profile)}</td>
+                <td data-label="Role">${getRoleBadge(e.role)}</td>
+                <td data-label="Actions">
+                    <div class="action-btns">
+                        <div class="action-btn edit" onclick="editEmployee('${e.id}')" title="Edit"><i class="fas fa-edit"></i></div>
+                        <div class="action-btn delete" onclick="deleteEmployee('${e.id}')" title="Delete"><i class="fas fa-trash-alt"></i></div>
+                        <div class="action-btn permission" onclick="openPermissionsForUser('${e.id}')" title="Permissions"><i class="fas fa-shield-alt"></i></div>
+                    </div>
+                </td>
+            </tr>
+        `).join("")
+        : `<tr><td colspan="8" class="text-center text-muted py-4">No employees found</td></tr>`;
 }
 
-function generateId() {
-    let m = 0;
-    employees.forEach(e => { let n = parseInt(e.id); if (n > m) m = n; });
-    return String(m + 1).padStart(4, '0');
+async function loadEmployees() {
+    try {
+        employees = await api("/employees");
+        renderTables();
+    } catch (err) {
+        showToast("Failed to load employees. Is the backend running?", true);
+        console.error(err);
+    }
 }
 
-function openEmployeeModal(id = null) {
+async function generateId() {
+    try {
+        const data = await api("/employees/next-id");
+        return data.id;
+    } catch {
+        let m = 0;
+        employees.forEach(e => { let n = parseInt(e.id); if (n > m) m = n; });
+        return String(m + 1).padStart(4, '0');
+    }
+}
+
+async function openEmployeeModal(id = null) {
     editMode = !!id;
     document.getElementById("modalTitle").innerHTML = editMode
         ? "<i class='fas fa-edit me-2'></i>Edit Employee"
         : "<i class='fas fa-user-plus me-2'></i>Add Employee";
+
     if (id) {
         let e = employees.find(e => e.id === id);
         if (e) {
@@ -224,7 +247,7 @@ function openEmployeeModal(id = null) {
             document.getElementById("empAvatar").value = e.avatar;
         }
     } else {
-        document.getElementById("empId").value = generateId();
+        document.getElementById("empId").value = await generateId();
         ["empName", "empDesignation", "empDepartment", "empTeam", "empSupervisor", "empTenure", "empShift", "empCity", "empAvatar"].forEach(i => {
             let el = document.getElementById(i);
             if (el) el.value = "";
@@ -235,14 +258,17 @@ function openEmployeeModal(id = null) {
     employeeModal.show();
 }
 
-function saveEmployee() {
+async function saveEmployee() {
     let id = document.getElementById("empId").value;
     let name = document.getElementById("empName").value.trim();
     if (!name) { alert("Name required"); return; }
     let p = parseInt(document.getElementById("empProfile").value);
     if (isNaN(p) || p < 0 || p > 100) { alert("Profile 0-100"); return; }
-    let newEmp = {
-        id, name, profile: p,
+
+    const payload = {
+        id,
+        name,
+        profile: p,
         role: editMode ? (employees.find(e => e.id === id)?.role || "viewer") : "viewer",
         designation: document.getElementById("empDesignation").value.trim() || "Staff",
         department: document.getElementById("empDepartment").value.trim() || "General",
@@ -253,27 +279,31 @@ function saveEmployee() {
         city: document.getElementById("empCity").value.trim() || "Unknown",
         avatar: document.getElementById("empAvatar").value.trim() || "https://randomuser.me/api/portraits/lego/1.jpg"
     };
-    if (editMode) {
-        let idx = employees.findIndex(e => e.id === id);
-        if (idx !== -1) employees[idx] = newEmp;
-        addLog("UPDATE", name);
-    } else {
-        if (employees.some(e => e.id === id)) { alert("Duplicate ID"); return; }
-        employees.push(newEmp);
-        addLog("CREATE", name);
+
+    try {
+        if (editMode) {
+            await api(`/employees/${id}`, { method: "PUT", body: JSON.stringify(payload) });
+        } else {
+            await api("/employees", { method: "POST", body: JSON.stringify(payload) });
+        }
+        await loadEmployees();
+        employeeModal.hide();
+        showToast(`${editMode ? "Updated" : "Added"} ${name}`);
+    } catch (err) {
+        alert(err.message);
     }
-    renderTables();
-    employeeModal.hide();
-    showToast(`${editMode ? "Updated" : "Added"} ${name}`);
 }
 
-function deleteEmployee(id) {
+async function deleteEmployee(id) {
     let e = employees.find(e => e.id === id);
-    if (confirm(`Delete ${e?.name}?`)) {
-        employees = employees.filter(e => e.id !== id);
-        addLog("DELETE", e?.name);
-        renderTables();
+    if (!confirm(`Delete ${e?.name}?`)) return;
+
+    try {
+        await api(`/employees/${id}`, { method: "DELETE" });
+        await loadEmployees();
         showToast(`Deleted ${e?.name}`);
+    } catch (err) {
+        showToast(err.message, true);
     }
 }
 
@@ -294,28 +324,34 @@ function renderPermissionsList() {
     `).join('');
 }
 
-function assignRole(id, r) {
-    let e = employees.find(e => e.id === id);
-    if (e) {
-        e.role = r;
-        addLog("PERMISSION", `${e.name} → ${r}`);
+async function assignRole(id, r) {
+    try {
+        const updated = await api(`/employees/${id}/role`, {
+            method: "PATCH",
+            body: JSON.stringify({ role: r }),
+        });
+        let idx = employees.findIndex(e => e.id === id);
+        if (idx !== -1) employees[idx] = updated;
         renderTables();
         if (document.getElementById("permissionsList")) renderPermissionsList();
-        showToast(`${e.name} is now ${r}`);
+        showToast(`${updated.name} is now ${r}`);
+    } catch (err) {
+        showToast(err.message, true);
     }
 }
 
-function assignRoleFromInput() {
+async function assignRoleFromInput() {
     let id = document.getElementById("assignEmpId").value.trim();
     let r = document.getElementById("assignRole").value;
-    let e = employees.find(e => e.id === id);
-    if (!e) { alert("Not found"); return; }
-    e.role = r;
-    addLog("PERMISSION", `${e.name} → ${r}`);
-    renderTables();
-    showToast(`${e.name} role updated`);
-    document.getElementById("assignEmpId").value = "";
-    permissionsModal.hide();
+    if (!employees.find(e => e.id === id)) { alert("Employee not found"); return; }
+
+    try {
+        await assignRole(id, r);
+        document.getElementById("assignEmpId").value = "";
+        permissionsModal.hide();
+    } catch (err) {
+        showToast(err.message, true);
+    }
 }
 
 function openPermissionsForUser(id) {
@@ -419,12 +455,19 @@ function toggleSubmenu(id) {
 function openFilterSidebar() { document.getElementById("filterPanel").classList.add("active"); }
 function closeFilterSidebar() { document.getElementById("filterPanel").classList.remove("active"); }
 
-function showAuditLog() {
-    alert(auditLog.length === 0 ? "No actions recorded yet." : auditLog.slice(0, 10).map(l => `${l.time} - ${l.action}: ${l.details}`).join("\n"));
+async function showAuditLog() {
+    try {
+        const logs = await api("/audit-logs?limit=10");
+        alert(logs.length === 0
+            ? "No actions recorded yet."
+            : logs.map(l => `${l.time} - ${l.action}: ${l.details}`).join("\n"));
+    } catch (err) {
+        showToast(err.message, true);
+    }
 }
 
 function showHelp() {
-    alert("📘 NexusHR Help\n\n• Add employees using the Add button\n• Edit/Delete using action buttons\n• Use filters to search employees\n• Export data to CSV\n• Dark mode toggle in navbar\n• Roles: Admin, Editor, Viewer\n\nFor support: support@nexushr.com");
+    alert("📘 NexusHR Help\n\n• Add employees using the Add button\n• Edit/Delete using action buttons\n• Use filters to search employees\n• Export data to CSV\n• Dark mode toggle in navbar\n• Roles: Admin, Editor, Viewer\n• Data is stored in MongoDB via the Python API\n\nFor support: support@nexushr.com");
 }
 
 function toggleDarkMode() {
@@ -455,7 +498,7 @@ function closeSidebar() {
     document.getElementById("overlay").classList.remove("active");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("mobileSidebarToggle").addEventListener("click", toggleSidebar);
     document.getElementById("sidebarClose").addEventListener("click", closeSidebar);
     document.getElementById("overlay").addEventListener("click", closeSidebar);
@@ -474,7 +517,7 @@ document.addEventListener("DOMContentLoaded", function () {
     permissionsModal = new bootstrap.Modal(document.getElementById("permissionsModal"));
 
     initTheme();
-    renderTables();
+    await loadEmployees();
     showSection("dashboard");
 
     let resizeTimer;
